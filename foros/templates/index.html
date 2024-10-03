@@ -1,0 +1,204 @@
+{% extends 'master.html' %}
+{% load static %}
+
+
+{% block title %}
+ForoVox
+{% endblock %}
+
+{% block content %}
+
+{% include 'components/admin-display.html' %}
+<div class="flex justify-center">
+  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[20.813rem]">
+    <h1 class="text-2xl font-bold">Post recientes</h1>
+    <div class="flex flex-col gap-5 mt-8 max-w-3xl">
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">programación</h3>
+        </div>
+        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
+        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
+          recomiendan aprender
+          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
+          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">matemáticas</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Cómo puedo mejorar en matemáticas? ¡Necesito consejos!</h2>
+        <p class="text-sm">Siempre he tenido dificultades con las matemáticas y quiero mejorar. ¿Qué métodos o recursos
+          me recomiendan para entender mejor los conceptos y practicar? Estoy abierto a sugerencias sobre libros, videos
+          o cualquier técnica que les haya funcionado a ustedes. ¡Gracias por la ayuda!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">videojuegos</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Qué juego me recomiendan para desconectar después de un día largo?</h2>
+        <p class="text-sm">Después de un día largo de trabajo/estudios, me gusta relajarme jugando, pero últimamente no
+          sé qué probar. ¿Algún juego que me recomienden para desconectar y disfrutar sin mucho estrés? Me gustan tanto
+          los juegos relajantes como los de acción ligera. Estoy buscando algo que...</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">empleosadvice</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Consejos para conseguir mi primer trabajo en desarrollo de software?</h2>
+        <p class="text-sm">Estoy en búsqueda de mi primer trabajo en desarrollo de software y no sé muy bien por dónde
+          empezar. ¿Alguien tiene consejos sobre cómo destacar en las entrevistas técnicas, mejorar mi currículum o
+          encontrar oportunidades en empresas de tecnología? He estado aplicando, pero me gustaría saber si hay algo más
+          que pueda hacer para aumentar mis ...</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">programación</h3>
+        </div>
+        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
+        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
+          recomiendan aprender
+          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
+          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">matemáticas</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Cómo puedo mejorar en matemáticas? ¡Necesito consejos!</h2>
+        <p class="text-sm">Siempre he tenido dificultades con las matemáticas y quiero mejorar. ¿Qué métodos o recursos
+          me recomiendan para entender mejor los conceptos y practicar? Estoy abierto a sugerencias sobre libros, videos
+          o cualquier técnica que les haya funcionado a ustedes. ¡Gracias por la ayuda!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">videojuegos</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Qué juego me recomiendan para desconectar después de un día largo?</h2>
+        <p class="text-sm">Después de un día largo de trabajo/estudios, me gusta relajarme jugando, pero últimamente no
+          sé qué probar. ¿Algún juego que me recomienden para desconectar y disfrutar sin mucho estrés? Me gustan tanto
+          los juegos relajantes como los de acción ligera. Estoy buscando algo que...</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">empleosadvice</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Consejos para conseguir mi primer trabajo en desarrollo de software?</h2>
+        <p class="text-sm">Estoy en búsqueda de mi primer trabajo en desarrollo de software y no sé muy bien por dónde
+          empezar. ¿Alguien tiene consejos sobre cómo destacar en las entrevistas técnicas, mejorar mi currículum o
+          encontrar oportunidades en empresas de tecnología? He estado aplicando, pero me gustaría saber si hay algo más
+          que pueda hacer para aumentar mis ...</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">programación</h3>
+        </div>
+        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
+        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
+          recomiendan aprender
+          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
+          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">matemáticas</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Cómo puedo mejorar en matemáticas? ¡Necesito consejos!</h2>
+        <p class="text-sm">Siempre he tenido dificultades con las matemáticas y quiero mejorar. ¿Qué métodos o recursos
+          me recomiendan para entender mejor los conceptos y practicar? Estoy abierto a sugerencias sobre libros, videos
+          o cualquier técnica que les haya funcionado a ustedes. ¡Gracias por la ayuda!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">videojuegos</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Qué juego me recomiendan para desconectar después de un día largo?</h2>
+        <p class="text-sm">Después de un día largo de trabajo/estudios, me gusta relajarme jugando, pero últimamente no
+          sé qué probar. ¿Algún juego que me recomienden para desconectar y disfrutar sin mucho estrés? Me gustan tanto
+          los juegos relajantes como los de acción ligera. Estoy buscando algo que...</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">empleosadvice</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Consejos para conseguir mi primer trabajo en desarrollo de software?</h2>
+        <p class="text-sm">Estoy en búsqueda de mi primer trabajo en desarrollo de software y no sé muy bien por dónde
+          empezar. ¿Alguien tiene consejos sobre cómo destacar en las entrevistas técnicas, mejorar mi currículum o
+          encontrar oportunidades en empresas de tecnología? He estado aplicando, pero me gustaría saber si hay algo más
+          que pueda hacer para aumentar mis ...</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">programación</h3>
+        </div>
+        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
+        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
+          recomiendan aprender
+          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
+          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">matemáticas</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Cómo puedo mejorar en matemáticas? ¡Necesito consejos!</h2>
+        <p class="text-sm">Siempre he tenido dificultades con las matemáticas y quiero mejorar. ¿Qué métodos o recursos
+          me recomiendan para entender mejor los conceptos y practicar? Estoy abierto a sugerencias sobre libros, videos
+          o cualquier técnica que les haya funcionado a ustedes. ¡Gracias por la ayuda!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">videojuegos</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Qué juego me recomiendan para desconectar después de un día largo?</h2>
+        <p class="text-sm">Después de un día largo de trabajo/estudios, me gusta relajarme jugando, pero últimamente no
+          sé qué probar. ¿Algún juego que me recomienden para desconectar y disfrutar sin mucho estrés? Me gustan tanto
+          los juegos relajantes como los de acción ligera. Estoy buscando algo que...</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">empleosadvice</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Consejos para conseguir mi primer trabajo en desarrollo de software?</h2>
+        <p class="text-sm">Estoy en búsqueda de mi primer trabajo en desarrollo de software y no sé muy bien por dónde
+          empezar. ¿Alguien tiene consejos sobre cómo destacar en las entrevistas técnicas, mejorar mi currículum o
+          encontrar oportunidades en empresas de tecnología? He estado aplicando, pero me gustaría saber si hay algo más
+          que pueda hacer para aumentar mis ...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

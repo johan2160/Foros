@@ -1,0 +1,57 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}
+ForoVox | Perfil usuario
+{% endblock %}
+
+{% block content %}
+
+{% include 'components/admin-display.html' %}
+<div class="flex justify-center">
+  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[30rem]">
+    <div class="w-full max-w-md border border-[#D9D9D9] rounded-md p-5">
+      <div class="flex items-center gap-4 mb-16">
+        <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario" class="size-20">
+        <h2 class="font-bold text-2xl">juanperez32</h2>
+      </div>
+      <div class="flex flex-col gap-4 text-sm">
+        <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
+          <h3 class="text-left font-semibold">Rut</h3>
+          <p clas>21502856-K</p>
+        </div>
+        <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
+          <h3 class="text-left font-semibold">Nombres</h3>
+          <p clas>Juan Roman</p>
+        </div>
+        <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
+          <h3 class="text-left font-semibold">Apellidos</h3>
+          <p clas>Perez Caceres</p>
+        </div>
+        <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
+          <h3 class="text-left font-semibold">Email</h3>
+          <p clas>juanroman32@gmail.com</p>
+        </div>
+        <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
+          <h3 class="text-left font-semibold">Contraseña <i class="ri-eye-line font-light cursor-pointer"></i>
+          </h3>
+          <p clas>************</p>
+        </div>
+        <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
+          <h3 class="text-left font-semibold">Nacionalidad</h3>
+          <p clas>Chileno</p>
+        </div>
+        <div class="flex gap-6">
+          <a href="/editar_usuario/"
+            class="flex-1 rounded-md bg-[#1c253b] text-center text-[#fafafa] py-2 transition-colors hover:bg-[#24304C]">Editar
+            Perfil</a>
+          <button
+            class="flex-1 rounded-md bg-[#ec2c2c] text-[#fafafa] py-2 transition-colors hover:bg-[#EE4444]">Deshabilitar
+            cuenta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

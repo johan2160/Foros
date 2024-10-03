@@ -1,0 +1,99 @@
+{% extends 'master.html' %}
+
+{% block title %}
+ForoVox | Administrar Temáticas
+{% endblock %}
+
+{% block content %}
+
+{% include 'components/admin-display.html' %}
+<div class="flex justify-center">
+  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
+    <h2 class="font-bold text-2xl mb-8">Administrar Temáticas</h2>
+    <a href="/crear_tematica/">
+      <button
+        class="p-[0.625rem] mb-8 rounded-lg text-sm bg-[#1c253b] text-[#fafafa] transition-colors hover:bg-[#24304C]">Crear
+        Temática <i class="ri-add-line"></i></button>
+    </a>
+    <div class="max-w-2xl w-full border rounded-md border-[#D9D9D9]">
+      <table class="w-full table-auto text-sm">
+        <thead class="">
+          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
+            <th class="text-left p-2">Temática</th>
+            <th class="text-right p-2">Moderación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
+            <td class="text-left p-2">Cine</td>
+            <td class="text-right p-2">
+              <a href="/editar_tematica/">
+                <button
+                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
+              </a>
+              <button
+                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+            </td>
+          </tr>
+          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
+            <td class="text-left p-2">Videojuegos</td>
+            <td class="text-right p-2">
+              <a href="/editar_tematica/">
+                <button
+                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
+              </a>
+              <button
+                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+            </td>
+          </tr>
+          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
+            <td class="text-left p-2">Ecología</td>
+            <td class="text-right p-2">
+              <a href="/editar_tematica/">
+                <button
+                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
+              </a>
+              <button
+                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+            </td>
+          </tr>
+          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
+            <td class="text-left p-2">Literatura</td>
+            <td class="text-right p-2">
+              <a href="/editar_tematica/">
+                <button
+                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
+              </a>
+              <button
+                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+            </td>
+          </tr>
+          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
+            <td class="text-left p-2">Viajes</td>
+            <td class="text-right p-2">
+              <a href="/editar_tematica/">
+                <button
+                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
+              </a>
+              <button
+                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#F1F3F8] transition-colors">
+            <td class="text-left p-2">Arte</td>
+            <td class="text-right p-2">
+              <a href="/editar_tematica/">
+                <button
+                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
+              </a>
+              <button
+                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}
+ForoVox | Ver Foro
+{% endblock %}
+
+{% block content %}
+
+{% include 'components/admin-display.html' %}
+<div class="flex justify-center">
+  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[20.813rem]">
+    <div class="flex gap-4">
+      <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Imagen del foro"
+        class="size-11 md:size-14 lg:size-16 rounded-full">
+      <div class="flex flex-col gap-2 max-w-3xl">
+        <h1 class="font-bold text-lg">CodersChile</h1>
+        <p class="text-sm">Un espacio para compartir conocimientos, resolver dudas y discutir sobre lenguajes,
+          frameworks,
+          desarrollo web, IA y más. Tanto principiantes como expertos pueden colaborar, compartir proyectos
+          y superar desafíos de código juntos. ¡Únete para aprender y crecer como programador!</p>
+        <div class="flex flex-wrap gap-4 mt-2">
+          <a href="/foro/crear_comentario/"
+            class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Crear Post <i
+              class="ri-add-line"></i></a>
+          <button
+            class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Abandonar
+            Foro</button>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col gap-5 mt-8 max-w-3xl">
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">cyberhumanx</h3>
+        </div>
+        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
+        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
+          recomiendan aprender
+          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
+          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">codenewbie87</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Qué editor de código es mejor para principiantes?</h2>
+        <p class="text-sm">Soy nuevo en la programación y me gustaría saber qué editor de código recomiendan para
+          alguien que está empezando. He escuchado hablar de opciones como VS Code, Sublime Text, y Atom, pero no estoy
+          seguro de cuál es mejor para mi nivel. Busco algo que sea fácil de usar pero también potente para cuando vaya
+          aprendiendo más. ¿Alguna recomendación? ¡Gracias por la ayuda!</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">cybil28</h3>
+        </div>
+        <h2 class="font-bold text-base">¿Cuál es la mejor manera de practicar programación diariamente?</h2>
+        <p class="text-sm">Estoy buscando maneras efectivas de practicar programación todos los días para mejorar mis
+          habilidades. ¿Qué tipo de ejercicios o proyectos recomiendan para alguien que está aprendiendo? ¿Conocen
+          plataformas o retos que ayuden a fortalecer el pensamiento lógico y el dominio de lenguajes como Python o
+          JavaScript? Agradezco cualquier sugerencia para mantenerme motivado y seguir mejorando. ¡Gracias!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

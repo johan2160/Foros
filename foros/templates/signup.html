@@ -1,0 +1,42 @@
+{% extends 'master.html' %}
+
+{% block title %}
+ForoVox | Sign Up
+{% endblock %}
+
+{% block content %}
+
+{% include 'components/header-nosession.html' %}
+
+<main class="flex flex-col items-center">
+  <h2 class="text-2xl font-bold mt-12">Crea una cuenta </h2>
+  <p class="text-[#666666] mt-1.5 text-center">Rellena el formulario para poder registrarte</p>
+  <form action="index.html" method="post" class="mt-8 px-4">
+    <div class="flex flex-col max-w-[23rem] gap-4">
+      <input class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="text" placeholder="Rut"
+        required>
+      <input class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="text" placeholder="Nombres"
+        required>
+      <div class="flex gap-4">
+        <input class="bg-[#fafafa] w-full border border-[#B4B4B4] rounded-lg py-2 text-center" type="text"
+          placeholder="Apellido Materno" required>
+        <input class="bg-[#fafafa] w-full border border-[#B4B4B4] rounded-lg py-2 text-center" type="text"
+          placeholder="Apellidor Paterno" required>
+      </div>
+      <input class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="email" placeholder="Correo"
+        required>
+      <input class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="text"
+        placeholder="Nacionalidad" required>
+      <input class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="password"
+        placeholder="Contraseña" required>
+      <input class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="password"
+        placeholder="Repetir contraseña" required>
+      <button type="submit"
+        class="bg-[#10182B] text-white hover:bg-[#24304C] rounded-lg py-2 text-center">Registrar</button>
+    </div>
+  </form>
+  <p class="mt-5 text-[#666666] text-center">Ya tienes una cuenta? <a href="/login"
+      class="text-black hover:underline underline-offset-2">Inicia Sesión</a></p>
+</main>
+
+{% endblock %}
