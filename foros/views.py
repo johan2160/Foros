@@ -1,11 +1,41 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .models import Usuario, Tematica, Foro, Post, Historial, Palabrotas
 
 
 def mostrarIndex(request):
-    return render(request, 'index.html')
+    nomUsuario = request.session.get("nomUsuario")
+    tipUsuario = request.session.get("tipUsuario")
+    
+    # Pasar los datos al template
+    return render(request, 'index.html', {'nomUsuario': nomUsuario, 'tipUsuario': tipUsuario})
+
 
 def mostrarLogin(request):
-    return render(request, 'login.html')
+    if request.method == "POST":
+        rut = request.POST["txtrut"]
+        pas = request.POST["txtpas"]
+
+        comprobarLogin = Usuario.objects.filter(rut=rut, contraseña=pas).values()
+
+        if comprobarLogin:
+            nom_usu = comprobarLogin[0]['nombres']
+            tip_usu = comprobarLogin[0]['tipo_usuario']
+
+            # Guardar datos en sesión
+            request.session["estadoSesion"] = True
+            request.session["idUsuario"] = comprobarLogin[0]['id']
+            request.session["nomUsuario"] = nom_usu  
+            request.session["tipUsuario"] = tip_usu
+
+            # Redirigir al index
+            return redirect('index')
+        
+        else:
+            datos = {'mensaje_error': 'Error de rut y/o contraseña'}
+            return render(request, 'login.html', datos)
+
+    else:
+        return render(request, 'login.html')
 
 def mostrarSignup(request):
     return render(request, 'signup.html')
