@@ -7,7 +7,9 @@
         ForoVox</h1>
     </a>
     <div class="flex items-center gap-4">
+      {% if nomUsuario %}
       <span>{{ nomUsuario }}</span>
+      {% endif %}
       <img src="{% static 'imagenes/tabula_rasa.png' %}" id="profile-image" alt="Foto de perfil"
         class="size-11 rounded-full cursor-pointer xl:cursor-auto">
 
