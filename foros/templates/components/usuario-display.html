@@ -7,7 +7,9 @@
         ForoVox</h1>
     </a>
     <div class="flex items-center gap-4">
+      {% if nomUsuario %}
       <span>{{ nomUsuario }}</span>
+      {% endif %}
       <img src="{% static 'imagenes/tabula_rasa.png' %}" id="profile-image" alt="Foto de perfil"
         class="size-11 rounded-full cursor-pointer xl:cursor-auto">
     </div>
@@ -31,7 +33,7 @@
           Foros que sigues
         </li>
       </a>
-      <a href="">
+      <a href="{% url 'logout' %}">
         <li
           class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
           <i class="ri-logout-box-r-line text-2xl"></i>
