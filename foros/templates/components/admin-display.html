@@ -1,55 +1,59 @@
 {% load static %}
 <header class="fixed w-full flex justify-center px-4 py-2 bg-[#10182B] text-white">
   <div class="relative flex justify-between items-center w-full max-w-7xl">
-    <a href="/" class="flex items-center gap-2">
+    <a href="{% url 'index' %}" class="flex items-center gap-2">
       <i class="ri-chat-4-line text-[2rem]"></i>
       <h1 class="text-[2rem] hidden md:block font-bold font-serif">
         ForoVox</h1>
     </a>
-    <img src="{% static 'imagenes/tabula_rasa.png' %}" id="profile-image" alt="Foto de perfil"
-      class="size-11 rounded-full cursor-pointer xl:cursor-auto">
+    <div class="flex items-center gap-4">
+      <span>{{ nomUsuario }}</span>
+      <img src="{% static 'imagenes/tabula_rasa.png' %}" id="profile-image" alt="Foto de perfil"
+        class="size-11 rounded-full cursor-pointer xl:cursor-auto">
+
+    </div>
   </div>
 </header>
 <div class="flex justify-center pt-[6.25rem]">
   <aside class="max-w-7xl w-full relative">
     <ul id="navigation-menu"
       class="hidden xl:flex xl:flex-col fixed right-4 top-20 z-50 bg-[#FAFAFA] text-sm text-[#333333] gap-2 p-4 border-[0.094rem] w-full max-w-72 border-[#D9D9D9] rounded-lg xl:right-auto xl:left-auto xl:inset-auto">
-      <a href="/perfil_usuario/">
+      <a href="{% url 'perfil_usuario' %}">
         <li
           class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
           <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil" class="size-6 rounded-full">
           Ver Perfil
         </li>
       </a>
-      <a href="/administrar_foros/">
+      <a href="{% url 'administrar_foros' %}">
         <li
           class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
           <i class="ri-group-2-line text-2xl"></i>
           Administrar Foros
         </li>
       </a>
-      <a href="/administrar_tematicas/">
+      <a href="{% url 'administrar_tematicas' %}">
         <li
           class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
           <i class="ri-layout-masonry-line text-2xl"></i>
           Administrar Temáticas
         </li>
       </a>
-      <a href="/gestionar_usuarios/">
+      <a href="{% url 'gestionar_usuarios' %}">
         <li
           class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
           <i class="ri-user-line text-2xl"></i>
           Gestionar Usuarios
         </li>
       </a>
-      <a href="/historial_acciones/">
+      <a href="{% url 'historial_acciones' %}">
         <li
           class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
           <i class="ri-history-line text-2xl"></i>
           Historial de Acciones
         </li>
       </a>
-      <a href="">
+      <a href="{% url 'logout' %}">
         <li
           class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
           <i class="ri-logout-box-r-line text-2xl"></i>
