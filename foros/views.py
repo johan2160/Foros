@@ -3,11 +3,16 @@ from .models import Usuario, Tematica, Foro, Post, Historial, Palabrotas
 
 
 def mostrarIndex(request):
-    nomUsuario = request.session.get("nomUsuario")
-    tipUsuario = request.session.get("tipUsuario")
-    
-    # Pasar los datos al template
-    return render(request, 'index.html', {'nomUsuario': nomUsuario, 'tipUsuario': tipUsuario})
+    estadoSesion = request.session.get("estadoSesion")
+
+    if estadoSesion:
+        nomUsuario = request.session.get("nomUsuario")
+        tipUsuario = request.session.get("tipUsuario")
+
+        # Pasar los datos al template
+        return render(request, 'index.html', {'nomUsuario': nomUsuario, 'tipUsuario': tipUsuario})
+    else:
+        return redirect('login')
 
 
 def mostrarLogin(request):
@@ -40,8 +45,19 @@ def mostrarLogin(request):
 def mostrarSignup(request):
     return render(request, 'signup.html')
 
-def mostrarLogout(request):
-    pass
+def logout(request):
+    try:
+        del request.session["estadoSesion"]
+        del request.session["idUsuario"]
+        del request.session["nomUsuario"]
+        del request.session["tipUsuario"]
+
+    # Capturar errores relacionados con las claves de la sesión que no existan
+    except KeyError:
+        pass
+
+    return redirect('login')
+
 
 def mostrarPerfilUsuario(request):
     return render(request, 'perfil_usuario.html')
