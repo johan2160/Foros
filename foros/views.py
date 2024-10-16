@@ -3,14 +3,22 @@ from .models import Usuario, Tematica, Foro, Post, Historial, Palabrotas
 
 
 def mostrarIndex(request):
+    # Conseguir el id del usuario y adjuntarlo al link que lo lleva a ver su perfil 
     estadoSesion = request.session.get("estadoSesion")
 
     if estadoSesion:
+        idUsuario = request.session.get("idUsuario")
         nomUsuario = request.session.get("nomUsuario")
         tipUsuario = request.session.get("tipUsuario")
+        
+        datos = {
+            'idUsuario': idUsuario,
+            'nomUsuario': nomUsuario,
+            'tipUsuario': tipUsuario,
+        }
 
         # Pasar los datos al template
-        return render(request, 'index.html', {'nomUsuario': nomUsuario, 'tipUsuario': tipUsuario})
+        return render(request, 'index.html', datos)
     else:
         return redirect('login')
 
@@ -42,15 +50,8 @@ def mostrarLogin(request):
     else:
         return render(request, 'login.html')
 
-def verificarSiExiste(clase, campoAVerificar, valor):
-    filtro = {f"{campoAVerificar}": valor}
-    
-    existe = clase.objects.filter(**filtro).exists()
-    
-    if existe:
-        return {'mensaje_error': f'El {campoAVerificar} con valor "{valor}" ya existe!'}
-    else:
-        return None   
+def verificarSiExiste(clase, campo, valor):
+    return clase.objects.filter(**{campo: valor}).exists()
 
 def mostrarSignup(request):
     
@@ -81,9 +82,7 @@ def mostrarSignup(request):
             
         # Si hay errores, renderizamos la plantilla con los mensajes
         if errores:
-            print(errores)
             return render(request, 'signup.html', {'errores': errores})
-            
 
         # Si no hay errores, procedemos a crear el usuario   
         try:
@@ -108,21 +107,37 @@ def mostrarSignup(request):
 
 
 def logout(request):
-    try:
-        del request.session["estadoSesion"]
-        del request.session["idUsuario"]
-        del request.session["nomUsuario"]
-        del request.session["tipUsuario"]
-
-    # Capturar errores relacionados con las claves de la sesión que no existan
-    except KeyError:
-        pass
-
-    return redirect('login')
+    request.session.flush()  # Elimina toda la sesión
+    
+    response = redirect('login')
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    
+    return response
 
 
-def mostrarPerfilUsuario(request):
-    return render(request, 'perfil_usuario.html')
+def mostrarPerfilUsuario(request, id):
+    usuario = Usuario.objects.get(id = id)
+    
+    estadoSesion = request.session.get("estadoSesion")
+
+    if estadoSesion:
+        idUsuario = request.session.get("idUsuario")
+        nomUsuario = request.session.get("nomUsuario")
+        tipUsuario = request.session.get("tipUsuario")
+        
+        datos = {
+            'usuario': usuario,
+            'idUsuario': idUsuario,
+            'nomUsuario': nomUsuario,
+            'tipUsuario': tipUsuario,
+        }
+        
+        return render(request, 'perfil_usuario.html', datos)
+    else:
+        return redirect('login')
+
 
 def mostrarEditarPerfilUsuario(request):
     return render(request, 'editar_perfil_usuario.html')
