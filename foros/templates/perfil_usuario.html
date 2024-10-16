@@ -7,39 +7,48 @@ ForoVox | Perfil usuario
 
 {% block content %}
 
+{% if tipUsuario == "Admin" %}
+
 {% include 'components/admin-display.html' %}
+
+{% else %}
+
+{% include 'components/usuario-display.html' %}
+
+{% endif %}
+
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[30rem]">
     <div class="w-full max-w-md border border-[#D9D9D9] rounded-md p-5">
       <div class="flex items-center gap-4 mb-16">
         <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario" class="size-20">
-        <h2 class="font-bold text-2xl">juanperez32</h2>
+        <h2 class="font-bold text-2xl">{{ nomUsuario }}</h2>
       </div>
       <div class="flex flex-col gap-4 text-sm">
         <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
           <h3 class="text-left font-semibold">Rut</h3>
-          <p clas>21502856-K</p>
+          <p clas>{{ usuario.rut }}</p>
         </div>
         <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
           <h3 class="text-left font-semibold">Nombres</h3>
-          <p clas>Juan Roman</p>
+          <p clas>{{ usuario.nombres }}</p>
         </div>
         <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
           <h3 class="text-left font-semibold">Apellidos</h3>
-          <p clas>Perez Caceres</p>
+          <p clas>{{ usuario.paterno }} {{ usuario.materno }}</p>
         </div>
         <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
           <h3 class="text-left font-semibold">Email</h3>
-          <p clas>juanroman32@gmail.com</p>
+          <p clas>{{ usuario.correo }}</p>
         </div>
         <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
           <h3 class="text-left font-semibold">Contraseña <i class="ri-eye-line font-light cursor-pointer"></i>
           </h3>
-          <p clas>************</p>
+          <p clas>{{ usuario.contraseña }}</p>
         </div>
         <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
           <h3 class="text-left font-semibold">Nacionalidad</h3>
-          <p clas>Chileno</p>
+          <p clas>{{ usuario.nacionalidad }}</p>
         </div>
         <div class="flex gap-6">
           <a href="/editar_usuario/"
