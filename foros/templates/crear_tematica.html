@@ -8,23 +8,49 @@ ForoVox | Crear Temática
 
 {% block content %}
 
+{% if tipUsuario == "Admin" %}
+
 {% include 'components/admin-display.html' %}
+
+{% else %}
+
+{% include 'components/usuario-display.html' %}
+
+{% endif %}
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
-    <form action="" class="flex flex-col w-full max-w-lg">
+    <form action="{% url 'crear_tematica' %}" method="post" class="flex flex-col w-full max-w-lg">
+      {% csrf_token %}
       <h1 class="text-2xl font-bold mb-10 text-start">Crear temática</h1>
       <div class="flex w-full flex-col">
-        <input type="text" placeholder="Nombre de la temática"
+        <input name="txtnomtem" type="text" placeholder="Nombre de la temática"
           class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 mb-4">
-        <textarea placeholder="Descripción de la temática"
+        <textarea name="txtdestem" placeholder="Descripción de la temática"
           class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 resize-none h-[16rem]"></textarea>
       </div>
-      <div class="flex flex-wrap gap-4 mt-4">
+      <div class="flex flex-wrap gap-4 mt-4 mb-5">
         <button type="submit" class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Crear
           Temática</button>
         <button type="reset"
           class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
       </div>
+
+      {% comment %} Respuestas del servidor {% endcomment %}
+      {% if errores %}
+        {% for value in errores.values %}
+
+          <span class="mb-2 w-full max-w-lg px-2 py-2 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{ value }}</span>
+
+        {% endfor %}
+
+      {% endif %}
+
+      {% if mensaje_exito %}
+
+        <p class="w-full max-w-lg px-2 py-2 rounded-md  text-green-600 text-center bg-green-200 translate-y-2">{{ mensaje_exito }}</p>
+
+      {% endif %}
+
     </form>
   </div>
 </div>
