@@ -3,7 +3,6 @@ from .models import Usuario, Tematica, Foro, Post, Historial, Palabrotas
 
 
 def mostrarIndex(request):
-    # Conseguir el id del usuario y adjuntarlo al link que lo lleva a ver su perfil 
     estadoSesion = request.session.get("estadoSesion")
 
     if estadoSesion:
@@ -17,7 +16,6 @@ def mostrarIndex(request):
             'tipUsuario': tipUsuario,
         }
 
-        # Pasar los datos al template
         return render(request, 'index.html', datos)
     else:
         return redirect('login')
@@ -139,6 +137,81 @@ def mostrarPerfilUsuario(request, id):
         return redirect('login')
 
 
+def mostrarCrearTematica(request):
+    if request.method == "POST":
+        nom_tematica = request.POST['txtnomtem']
+        des_tematica = request.POST['txtdestem']
+        
+        errores = {}
+            
+        # Verificar si la tematica ya existe
+        if verificarSiExiste(Tematica, 'nombre', nom_tematica):
+            errores['nombre'] = f'La tematica: {nom_tematica} ya existe, intente crear otra.'
+            
+        # Si hay errores, renderizamos la plantilla con los mensajes
+        if errores:
+            return render(request, 'crear_tematica.html', {'errores': errores})
+        
+        try:
+            tematica = Tematica(nombre = nom_tematica, descripcion = des_tematica)
+            tematica.save()
+
+            mensaje_exito = {'mensaje_exito': 'Tematica añadida correctamente!'}
+            return render(request, 'crear_tematica.html', mensaje_exito)
+        
+        except Exception as e:
+            errores['db_error'] = f'Error al crear la tematica: {str(e)}'
+            return render(request, 'crear_tematica.html', {'errores': errores})
+        
+    return render(request, 'crear_tematica.html')
+
+def mostrarEditarTematica(request, id):
+    if request.method == "GET":
+        tematica = Tematica.objects.get(id = id)
+        datos = {'tematica': tematica}
+        return render(request, 'editar_tematica.html', datos)
+    
+    if request.method == "POST":
+        nom_tematica = request.POST['txtnomtem']
+        des_tematica = request.POST['txtdestem']
+        
+        errores = {}
+            
+        # Verificar si la tematica ya existe
+        if verificarSiExiste(Tematica, 'nombre', nom_tematica):
+            errores['nombre'] = f'La tematica: {nom_tematica} ya existe.'
+            
+        # Si hay errores, renderizamos la plantilla con los mensajes
+        if errores:
+            tematica = Tematica.objects.get(id=id)
+            return render(request, 'editar_tematica.html', {'errores': errores, 'tematica': tematica})
+        
+        try:
+            tematica = Tematica.objects.get(id = id)
+            
+            tematica.nombre = nom_tematica
+            tematica.descripcion = des_tematica
+            tematica.save()
+
+            datos = {'tematica': tematica, 'mensaje_exito': 'Tematica actualizada correctamente!'}
+            return render(request, 'editar_tematica.html', datos)
+        
+        except Exception as e:
+            errores['db_error'] = f'Error al editar la tematica: {str(e)}'
+            return render(request, f'editar_tematica.html', {'errores': errores})
+
+
+def mostrarAdministrarTematicas(request):
+    tematicas = Tematica.objects.all().values()
+    datos = {'tematicas': tematicas}
+    
+    return render(request, 'administrar_tematicas.html', datos)
+
+
+def mostrarGestionarUsuarios(request):
+    return render(request, 'gestionar_usuarios.html')
+
+
 def mostrarEditarPerfilUsuario(request):
     return render(request, 'editar_perfil_usuario.html')
 
@@ -160,17 +233,6 @@ def mostrarCrearForo(request):
 def mostrarEditarForo(request):
     return render(request, 'editar_foro.html')
 
-def mostrarAdministrarTematicas(request):
-    return render(request, 'administrar_tematicas.html')
-
-def mostrarCrearTematica(request):
-    return render(request, 'crear_tematica.html')
-
-def mostrarEditarTematica(request):
-    return render(request, 'editar_tematica.html')
-
-def mostrarGestionarUsuarios(request):
-    return render(request, 'gestionar_usuarios.html')
 
 def mostrarHistorialAcciones(request):
     return render(request, 'historial_acciones.html')
