@@ -18,7 +18,7 @@ urlpatterns = [
     path('editar_foro/', views.mostrarEditarForo, name='editar_foro'),
     path('administrar_tematicas/', views.mostrarAdministrarTematicas, name='administrar_tematicas'),
     path('crear_tematica/', views.mostrarCrearTematica, name='crear_tematica'),
-    path('editar_tematica/', views.mostrarEditarTematica, name='editar_tematica'),
+    path('editar_tematica/<int:id>', views.mostrarEditarTematica, name='editar_tematica'),
     path('gestionar_usuarios/', views.mostrarGestionarUsuarios, name='gestionar_usuarios'),
     path('historial_acciones/', views.mostrarHistorialAcciones, name='historial_acciones'),
 ]
