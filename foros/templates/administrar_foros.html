@@ -16,6 +16,9 @@ ForoVox | Administrar Foros
         Foro <i class="ri-add-line"></i></button>
     </a>
     <div class="max-w-2xl w-full border rounded-md border-[#D9D9D9]">
+
+      {% if foros %}
+
       <table class="w-full table-auto text-sm">
         <thead class="">
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
@@ -25,9 +28,10 @@ ForoVox | Administrar Foros
           </tr>
         </thead>
         <tbody>
+          {% for foro in foros %}
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">Cinefilos</td>
-            <td class="text-left p-2">Cine</td>
+            <td class="text-left p-2">{{ foro.nombre }}</td>
+            <td class="text-left p-2">{{ foro.tematica.nombre }}</td>
             <td class="text-right p-2">
               <a href="/editar_foro/">
                 <button
@@ -37,68 +41,10 @@ ForoVox | Administrar Foros
                 class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
             </td>
           </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">Gamerzone</td>
-            <td class="text-left p-2">Videojuegos</td>
-            <td class="text-right p-2">
-              <a href="/editar_foro/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">Ecomundo</td>
-            <td class="text-left p-2">Ecología</td>
-            <td class="text-right p-2">
-              <a href="/editar_foro/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">Libros</td>
-            <td class="text-left p-2">Literatura</td>
-            <td class="text-right p-2">
-              <a href="/editar_foro/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">Viajerocurioso</td>
-            <td class="text-left p-2">Viajes</td>
-            <td class="text-right p-2">
-              <a href="/editar_foro/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
-          <tr class="hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">Artmakers</td>
-            <td class="text-left p-2">Arte</td>
-            <td class="text-right p-2">
-              <a href="/editar_foro/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
+      {% endif %}
     </div>
   </div>
 </div>
