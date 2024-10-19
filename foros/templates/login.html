@@ -11,7 +11,7 @@ ForoVox | Login
 <main class="flex flex-col items-center justify-center mt-20">
   <h2 class="text-2xl font-bold mt-12">Iniciar sesión</h2>
   <p class="text-[#666666] mt-1.5 text-center">Rellena el formulario para poder ingresar</p>
-  <form action="{% url 'login' %}" method="post" class="flex flex-col mt-8 px-4 w-full items-center">
+  <form action="{% url 'form_login' %}" method="post" class="flex flex-col mt-8 px-4 w-full items-center">
     {% csrf_token %}
     <div class="flex flex-col w-full max-w-[23rem] gap-4">
       <input class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" name="txtrut" type="text"
