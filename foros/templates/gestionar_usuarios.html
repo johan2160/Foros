@@ -11,6 +11,9 @@ ForoVox | Gestionar Usuarios
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
     <h2 class="font-bold text-2xl mb-8">Gestionar Usuarios</h2>
     <div class="max-w-2xl w-full border rounded-md border-[#D9D9D9]">
+      
+      {% if usuarios %}
+
       <table class="w-full table-auto text-sm">
         <thead>
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
@@ -19,14 +22,15 @@ ForoVox | Gestionar Usuarios
           </tr>
         </thead>
         <tbody>
+          {% for usuario in usuarios %}
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">cybil23</td>
+            <td class="text-left p-2">{{ usuario.nombres }}</td>
             <td class="text-right p-2">
-              <a href="/editar_usuario/">
+              <a href="{% url 'editar_usuario' usuario.id %}">
                 <button
                   class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
               </a>
-              <a href="/perfil_usuario/">
+              <a href="{% url 'perfil_usuario' usuario.id %}">
                 <button
                   class="rounded-md border border-[#1c253b] text-[#1c253b] p-1.5 transition-colors hover:bg-[#F2F2F2]">Ver</button>
               </a>
@@ -34,83 +38,10 @@ ForoVox | Gestionar Usuarios
                 class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
             </td>
           </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">destroyer20</td>
-            <td class="text-right p-2">
-              <a href="/editar_usuario/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <a href="/perfil_usuario/">
-                <button
-                  class="rounded-md border border-[#1c253b] text-[#1c253b] p-1.5 transition-colors hover:bg-[#F2F2F2]">Ver</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">messi10</td>
-            <td class="text-right p-2">
-              <a href="/editar_usuario/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <a href="/perfil_usuario/">
-                <button
-                  class="rounded-md border border-[#1c253b] text-[#1c253b] p-1.5 transition-colors hover:bg-[#F2F2F2]">Ver</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">skills123</td>
-            <td class="text-right p-2">
-              <a href="/editar_usuario/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <a href="/perfil_usuario/">
-                <button
-                  class="rounded-md border border-[#1c253b] text-[#1c253b] p-1.5 transition-colors hover:bg-[#F2F2F2]">Ver</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">hipnotron</td>
-            <td class="text-right p-2">
-              <a href="/editar_usuario/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <a href="/perfil_usuario/">
-                <button
-                  class="rounded-md border border-[#1c253b] text-[#1c253b] p-1.5 transition-colors hover:bg-[#F2F2F2]">Ver</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
-          <tr class="hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2">maradonagod10</td>
-            <td class="text-right p-2">
-              <a href="/editar_usuario/">
-                <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
-              </a>
-              <a href="/perfil_usuario/">
-                <button
-                  class="rounded-md border border-[#1c253b] text-[#1c253b] p-1.5 transition-colors hover:bg-[#F2F2F2]">Ver</button>
-              </a>
-              <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
+      {% endif %}
     </div>
   </div>
 </div>
