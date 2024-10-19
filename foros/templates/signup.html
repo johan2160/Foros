@@ -11,7 +11,7 @@ ForoVox | Sign Up
 <main class="flex flex-col items-center">
   <h2 class="text-2xl font-bold mt-12">Crea una cuenta </h2>
   <p class="text-[#666666] mt-1.5 text-center">Rellena el formulario para poder registrarte</p>
-  <form id="user-form" action="{% url 'signup' %}" method="post" class="mt-8 px-4">
+  <form action="{% url 'form_signup' %}" method="post" class="mt-8 px-4">
     {% csrf_token %}
     <div class="flex flex-col max-w-[23rem] gap-4">
       <input name="txtrut" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="text" placeholder="Rut"
