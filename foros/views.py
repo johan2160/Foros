@@ -132,17 +132,66 @@ def mostrarPerfilUsuario(request, id):
         return redirect('login')
 
 
-def mostrarEditarPerfilUsuario(request):
-    return render(request, 'editar_perfil_usuario.html')
+def mostrarEditarPerfilUsuario(request, id):
+    usuario = Usuario.objects.get(id = id)
+    datos = {'usuario': usuario}
+    return render(request, 'editar_perfil_usuario.html', datos)
 
 
-def formEditarPerfilUsuario(request):
-        # Código para manejar la actualización del perfil
-        pass
+def formEditarPerfilUsuario(request, id):
+    nom_usu = request.POST['txtnom']
+    apem_usu = request.POST['txtapem']
+    apep_usu = request.POST['txtapep']
+    nac_usu = request.POST['txtnac']
+    pas_usu = request.POST['txtpas']
+    pas2_usu = request.POST['txtpas2']
+
+    usuario = Usuario.objects.get(id = id)
+
+    errores = {}
+
+    if pas_usu != pas2_usu:
+        errores['contraseña'] = 'Las contraseñas no coinciden.'
+
+    datos = {'errores': errores, 'usuario': usuario}
+
+    if errores:
+        return render(request, 'editar_perfil_usuario.html', datos)
     
-def mostrarGestionarUsuarios(request):
-    return render(request, 'gestionar_usuarios.html')
+    estadoSesion = request.session.get("estadoSesion")
+    if estadoSesion:
+        idUsuario = request.session.get("idUsuario")
+        nomUsuario = request.session.get("nomUsuario")
+        tipUsuario = request.session.get("tipUsuario")
+    
+    try:
+        usuario.nombres = nom_usu
+        usuario.materno = apem_usu
+        usuario.paterno = apep_usu
+        usuario.nacionalidad = nac_usu
+        usuario.contraseña = pas_usu
 
+        usuario.save()
+
+        datos = {
+            'usuario': usuario, 
+            'mensaje_exito': 'Usuario actualizado correctamente!',
+            'idUsuario': idUsuario,
+            'nomUsuario': nomUsuario,
+            'tipUsuario': tipUsuario,
+            
+            }
+
+        return render(request, 'perfil_usuario.html', datos)
+    except Exception as e:
+        errores['db_error'] = f'Error al crear el usuario: {str(e)}'
+        return render(request, 'editar_perfil_usuario.html', {'errores': errores})
+    
+
+def mostrarGestionarUsuarios(request):
+    usuarios = Usuario.objects.all()
+    datos = {'usuarios': usuarios}
+    return render(request, 'gestionar_usuarios.html', datos)
 
 
 # ---------- Temáticas ----------
@@ -208,7 +257,7 @@ def formEditarTematica(request, id):
 
 
 def mostrarAdministrarTematicas(request):
-    tematicas = Tematica.objects.all().values()
+    tematicas = Tematica.objects.all()
     datos = {'tematicas': tematicas}
     return render(request, 'administrar_tematicas.html', datos)
 
@@ -217,17 +266,49 @@ def mostrarAdministrarTematicas(request):
 def mostrarForo(request):
     return render(request, 'ver_foro.html')
 
-
 def mostrarCrearForo(request):
-    return render(request, 'crear_foro.html')
+    tematicas = Tematica.objects.all()
+    datos = {'tematicas': tematicas}
+    return render(request, 'crear_foro.html', datos)
 
+def formCrearForo(request):
+    nom_foro = request.POST['txtnomfor']
+    des_foro = request.POST['txtdesfor']
+    tema = request.POST['cbotem']
+    
+    errores = {}
+    tematicas = Tematica.objects.all()
+
+    if verificarSiExiste(Foro, 'nombre', nom_foro):
+        errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+
+    if errores:
+        return render(request, 'crear_foro.html', {'errores': errores, 'tematicas': tematicas})
+    
+    try:
+        foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica = tema)
+        foro.save()
+        
+        datos = {'tematicas': tematicas, 'mensaje_exito': 'Tematica añadida correctamente!'}
+        return render(request, 'crear_foro.html', datos)
+    
+    except Exception as e:
+        errores['db_error'] = f'Error al crear el foro: {str(e)}'
+        return render(request, 'crear_foro.html', {'errores': errores})
 
 def mostrarEditarForo(request):
     return render(request, 'editar_foro.html')
 
+def formEditarForo(request):
+    return render(request, 'crear_foro.html')
 
 def mostrarAdministrarForos(request):
-    return render(request, 'administrar_foros.html')
+    foros = Foro.objects.all()
+    for foro in foros:
+        print(f"Nombre del foro: {foro.nombre}, Tematica: {foro.tematica}")
+    
+    datos = {'foros': foros}
+    return render(request, 'administrar_foros.html', datos)
 
 
 # ---------- Comentarios ----------
