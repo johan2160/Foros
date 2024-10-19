@@ -10,7 +10,8 @@ ForoVox | Crear Foro
 {% include 'components/admin-display.html' %}
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
-    <form action="" class="flex flex-col w-full max-w-lg">
+    <form action="{% url 'form_crear_foro' %}" method="post" class="flex flex-col w-full max-w-lg">
+      {% csrf_token %}
       <h1 class="text-2xl font-bold mb-10 text-start">Crear foro</h1>
       <div class="flex w-full items-center gap-3.5 mb-6">
         <img src="{% static 'imagenes/tabula_rasa.png' %}" id="foto-de-perfil" alt="Imagen del Foro"
@@ -20,11 +21,17 @@ ForoVox | Crear Foro
             class="ri-upload-line"></i> Subir imagen</label>
         <input type="file" accept="image/jpeg, image/png, image/jpg" id="input-file" class="hidden">
       </div>
-      <div class="flex w-full flex-col">
-        <input type="text" placeholder="Nombre del Foro"
-          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 mb-4">
-        <textarea placeholder="Descripción del Foro"
-          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 resize-none h-[16rem]"></textarea>
+      <div class="flex w-full flex-col gap-4">
+        <input name="txtnomfor" type="text" placeholder="Nombre del Foro"
+          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3" required>
+        <textarea name="txtdesfor" placeholder="Descripción del Foro"
+          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 resize-none h-[16rem]" required></textarea>
+        <select name="cbotem" class="py-2 px-2 bg-[#17191C] text-white rounded-md" required>
+          <option value="">Seleccione tematica</option>
+          {% for tematica in tematicas %}
+              <option value="{{ tematica.id }}">{{ tematica.nombre }}</option>
+          {% endfor %}
+        </select>
       </div>
       <div class="flex flex-wrap gap-4 mt-4">
         <button type="submit" class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Crear
@@ -32,6 +39,21 @@ ForoVox | Crear Foro
         <button type="reset"
           class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
       </div>
+
+      {% if errores %}
+        {% for value in errores.values %}
+
+          <span class="mb-2 w-full max-w-lg px-2 py-2 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{ value }}</span>
+
+        {% endfor %}
+
+      {% endif %}
+
+      {% if mensaje_exito %}
+
+        <p class="w-full max-w-lg px-2 py-2 rounded-md  text-green-600 text-center bg-green-200 translate-y-2">{{ mensaje_exito }}</p>
+
+      {% endif %}
     </form>
   </div>
 </div>
