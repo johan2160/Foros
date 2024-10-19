@@ -16,33 +16,35 @@ ForoVox | Editar Perfil
         <h2 class="font-bold text-2xl">juanperez32</h2>
         <i class="ri-edit-line text-3xl cursor-pointer"></i>
       </div>
-      <div class="flex flex-col gap-4 text-sm">
-        <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text" placeholder="Rut"
-          required>
-        <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
-          placeholder="Nombres" required>
-        <div class="flex gap-4">
-          <input class="bg-[#fafafa] w-full border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
-            placeholder="Apellido Materno" required>
-          <input class="bg-[#fafafa] w-full border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
-            placeholder="Apellidor Paterno" required>
+      <form action="{% url 'form_editar_usuario' %}" method="POST">
+        <div class="flex flex-col gap-4 text-sm">
+          <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text" placeholder="Rut"
+            required>
+          <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
+            placeholder="Nombres" required>
+          <div class="flex gap-4">
+            <input class="bg-[#fafafa] w-full border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
+              placeholder="Apellido Materno" required>
+            <input class="bg-[#fafafa] w-full border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
+              placeholder="Apellidor Paterno" required>
+          </div>
+          <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="email"
+            placeholder="Correo" required>
+          <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
+            placeholder="Nacionalidad" required>
+          <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
+            placeholder="Contraseña" required>
+          <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
+            placeholder="Repetir contraseña" required>
+          <div class="flex gap-6">
+            <a href="/editar_usuario/"
+              class="flex-1 rounded-lg bg-[#1c253b] text-center text-[#fafafa] py-2 transition-colors hover:bg-[#24304C]">Guardar
+              cambios</a>
+            <button
+              class="flex-1 transition-colors rounded-lg bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
+          </div>
         </div>
-        <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="email"
-          placeholder="Correo" required>
-        <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
-          placeholder="Nacionalidad" required>
-        <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
-          placeholder="Contraseña" required>
-        <input class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
-          placeholder="Repetir contraseña" required>
-        <div class="flex gap-6">
-          <a href="/editar_usuario/"
-            class="flex-1 rounded-lg bg-[#1c253b] text-center text-[#fafafa] py-2 transition-colors hover:bg-[#24304C]">Guardar
-            cambios</a>
-          <button
-            class="flex-1 transition-colors rounded-lg bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 </div>
