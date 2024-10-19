@@ -31,12 +31,11 @@ class Tematica(models.Model):
     descripcion = models.TextField(max_length=400)
 
 class Foro(models.Model):
-    nombre = models.TextField(max_length=30)
+    nombre = models.TextField(max_length=30, unique=True)
     descripcion = models.TextField(max_length=460)
     imagen_url = models.URLField(null=True, blank=True)
-    tematicas = models.ManyToManyField(Tematica, related_name='foros')
+    tematica = models.ForeignKey(Tematica, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(default=timezone.now)
-
 
 class Post(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
