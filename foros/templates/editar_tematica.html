@@ -12,7 +12,7 @@ ForoVox | Editar Temática
 
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
-    <form action="{% url 'editar_tematica' tematica.id %}" method="post" class="flex flex-col w-full max-w-lg">
+    <form action="{% url 'form_editar_tematica' tematica.id %}" method="post" class="flex flex-col w-full max-w-lg">
       {% csrf_token %}
       <h1 class="text-2xl font-bold mb-10 text-start">Editar temática</h1>
       <div class="flex w-full flex-col">
