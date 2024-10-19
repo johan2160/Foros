@@ -7,8 +7,8 @@
         ForoVox</h1>
     </a>
     <div class="flex items-center gap-4">
-      {% if nomUsuario %}
-      <span>{{ nomUsuario }}</span>
+      {% if usuario.nombres %}
+      <span>{{ usuario.nombres }}</span>
       {% endif %}
       <img src="{% static 'imagenes/default-profile.png' %}" id="profile-image" alt="Foto de perfil"
         class="size-11 rounded-full cursor-pointer xl:cursor-auto">
