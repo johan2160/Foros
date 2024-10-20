@@ -296,17 +296,54 @@ def formCrearForo(request):
         errores['db_error'] = f'Error al crear el foro: {str(e)}'
         return render(request, 'crear_foro.html', {'errores': errores})
 
-def mostrarEditarForo(request):
-    return render(request, 'editar_foro.html')
+def mostrarEditarForo(request, id):
+    foro = Foro.objects.get(id = id)
+    tematicas = Tematica.objects.all()
+    datos = {'foro': foro, 'tematicas': tematicas}
+    return render(request, 'editar_foro.html', datos)
 
-def formEditarForo(request):
-    return render(request, 'crear_foro.html')
+def formEditarForo(request, id):
+    nom_foro = request.POST['txtnomfor']
+    des_foro = request.POST['txtdesfor']
+    tema_id = request.POST['cbotem']  # ID de la temática seleccionada
+
+    errores = {}
+
+    if verificarSiExiste(Foro, 'nombre', nom_foro):
+        errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+        
+    if errores:
+        foro = Foro.objects.get(id=id)
+        tematicas = Tematica.objects.all()
+        datos = {'foro': foro, 'tematicas': tematicas, 'errores': errores}
+        return render(request, 'editar_foro.html', datos)
+    
+    try:
+        foro = Foro.objects.get(id=id)
+        foro.nombre = nom_foro
+        foro.descripcion = des_foro
+
+        # Obtener la instancia de la temática seleccionada
+        tematica = Tematica.objects.get(id=tema_id)
+        foro.tematica = tematica
+        
+        foro.save()
+        
+        foros = Foro.objects.all()
+        datos = {'foros': foros, 'mensaje_exito': 'Foro actualizado correctamente!'}
+        return render(request, 'administrar_foros.html', datos) 
+    
+    except Exception as e:
+        errores['db_error'] = f'Error al editar el foro: {str(e)}'
+        foro = Foro.objects.get(id=id)
+        tematicas = Tematica.objects.all()
+        datos = {'errores': errores, 'foro': foro, 'tematicas': tematicas}
+        return render(request, 'editar_foro.html', datos)
+
+    
 
 def mostrarAdministrarForos(request):
-    foros = Foro.objects.all()
-    for foro in foros:
-        print(f"Nombre del foro: {foro.nombre}, Tematica: {foro.tematica}")
-    
+    foros = Foro.objects.all()  
     datos = {'foros': foros}
     return render(request, 'administrar_foros.html', datos)
 
