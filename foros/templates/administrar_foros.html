@@ -15,12 +15,12 @@ ForoVox | Administrar Foros
         class="p-[0.625rem] mb-8 rounded-lg text-sm bg-[#1c253b] text-[#fafafa] transition-colors hover:bg-[#24304C]">Crear
         Foro <i class="ri-add-line"></i></button>
     </a>
-    <div class="max-w-2xl w-full border rounded-md border-[#D9D9D9]">
+    <div class="max-w-2xl w-full border rounded-md border-[#D9D9D9] mb-10">
 
       {% if foros %}
 
       <table class="w-full table-auto text-sm">
-        <thead class="">
+        <thead>
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
             <th class="text-left p-2">Nombre</th>
             <th class="text-left p-2">Temática</th>
@@ -33,7 +33,7 @@ ForoVox | Administrar Foros
             <td class="text-left p-2">{{ foro.nombre }}</td>
             <td class="text-left p-2">{{ foro.tematica.nombre }}</td>
             <td class="text-right p-2">
-              <a href="/editar_foro/">
+              <a href="{% url 'editar_foro' foro.id %}">
                 <button
                   class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
               </a>
