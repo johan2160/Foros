@@ -265,7 +265,8 @@ def mostrarAdministrarTematicas(request):
 # ---------- Foro ----------
 def mostrarForo(request, foro_id):
     foro = Foro.objects.get(id = foro_id)
-    datos = {'foro': foro}
+    publicaciones = Publicacion.objects.filter(foro = foro)
+    datos = {'foro': foro, 'publicaciones': publicaciones}
     return render(request, 'ver_foro.html', datos)
 
 def mostrarCrearForo(request):
@@ -363,21 +364,31 @@ def formCrearPublicacion(request, foro_id):
     titulo = request.POST['txtpubtit']
     comentario = request.POST['txtpubcom']
     
-    usuario = Usuario.objects.get(id = id)
-    foro = Foro.objects.get(foro_id)
+    idUsuario = request.session.get("idUsuario")
+    usuario = Usuario.objects.get(id = idUsuario)
+    
+    errores = {}
+    
+    foro = Foro.objects.get(id = foro_id)
     
     try:
-        Publicacion(titulo =  titulo, texto = comentario)
+        publicacion = Publicacion(usuario = usuario, foro = foro, titulo =  titulo, texto = comentario)
+        publicacion.save()
+        print(publicacion.usuario.nombres)
         
-    except:
-        pass
-
-    # foro = Foro.objects.get(id = id)
-    # datos = {'foro': foro}
-    
-    foros = Foro.objects.all()  
-    datos = {'foros': foros}
-    return render(request, 'administrar_foros.html', datos)
+        publicaciones = Publicacion.objects.filter(foro = foro)
+        datos = {
+            'publicaciones': publicaciones, 
+            'foro': foro, 
+            'mensaje_exito': 'Publicacion creada correctamente!'
+            }
+        
+        return render(request, 'ver_foro.html', datos)
+        
+    except Exception as e:
+        errores['db_error'] = f'Error al crear la publicacion: {str(e)}'
+        datos = {'errores': errores, 'foro': foro}
+        return render(request, 'crear_publicacion.html', datos)
 
 
 def mostrarEditarPublicacion(request, foro_id, publicacion_id):
