@@ -28,7 +28,7 @@ ForoVox | Administrar Foros
           </tr>
         </thead>
         <tbody>
-          {% for foro in foros %}
+          {% for foro in foros reversed %}
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
             <td class="text-left p-2">{{ foro.nombre }}</td>
             <td class="text-left p-2">{{ foro.tematica.nombre }}</td>
