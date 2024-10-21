@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Usuario, Tematica, Foro, Post, Historial, Palabrotas
+from .models import Usuario, Tematica, Foro, Publicacion, Historial, Palabrotas
 
 
 # ---------- Index ----------
@@ -263,8 +263,8 @@ def mostrarAdministrarTematicas(request):
 
 
 # ---------- Foro ----------
-def mostrarForo(request, id):
-    foro = Foro.objects.get(id = id)
+def mostrarForo(request, foro_id):
+    foro = Foro.objects.get(id = foro_id)
     datos = {'foro': foro}
     return render(request, 'ver_foro.html', datos)
 
@@ -276,27 +276,30 @@ def mostrarCrearForo(request):
 def formCrearForo(request):
     nom_foro = request.POST['txtnomfor']
     des_foro = request.POST['txtdesfor']
-    tema = request.POST['cbotem']
+    tema_id = request.POST['cbotem']
     
-    errores = {}
     tematicas = Tematica.objects.all()
+    errores = {}
 
     if verificarSiExiste(Foro, 'nombre', nom_foro):
         errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
 
     if errores:
-        return render(request, 'crear_foro.html', {'errores': errores, 'tematicas': tematicas})
+        datos = {'errores': errores, 'tematicas': tematicas}
+        return render(request, 'crear_foro.html', datos)
     
     try:
-        foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica = tema)
+        tematica = Tematica.objects.get(id=tema_id)
+        foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica = tematica)
         foro.save()
         
-        datos = {'tematicas': tematicas, 'mensaje_exito': 'Tematica añadida correctamente!'}
+        datos = {'tematicas': tematicas, 'mensaje_exito': 'Foro creado correctamente!'}
         return render(request, 'crear_foro.html', datos)
     
     except Exception as e:
         errores['db_error'] = f'Error al crear el foro: {str(e)}'
-        return render(request, 'crear_foro.html', {'errores': errores})
+        datos = {'errores': errores, 'tematicas': tematicas}
+        return render(request, 'crear_foro.html', datos)
 
 def mostrarEditarForo(request, id):
     foro = Foro.objects.get(id = id)
@@ -351,16 +354,41 @@ def mostrarAdministrarForos(request):
 
 
 # ---------- Comentarios ----------
-def mostrarCrearComentario(request):
-    return render(request, 'crear_comentario.html')
+def mostrarCrearPublicacion(request, foro_id):
+    foro = Foro.objects.get(id = foro_id)
+    datos = {'foro': foro}
+    return render(request, 'crear_publicacion.html', datos)
+
+def formCrearPublicacion(request, foro_id):
+    titulo = request.POST['txtpubtit']
+    comentario = request.POST['txtpubcom']
+    
+    usuario = Usuario.objects.get(id = id)
+    foro = Foro.objects.get(foro_id)
+    
+    try:
+        Publicacion(titulo =  titulo, texto = comentario)
+        
+    except:
+        pass
+
+    # foro = Foro.objects.get(id = id)
+    # datos = {'foro': foro}
+    
+    foros = Foro.objects.all()  
+    datos = {'foros': foros}
+    return render(request, 'administrar_foros.html', datos)
 
 
-def mostrarEditarComentario(request):
-    return render(request, 'editar_comentario.html')
+def mostrarEditarPublicacion(request, foro_id, publicacion_id):
+    return render(request, 'editar_publicacion.html')
+
+def formEditarPublicacion(request, foro_id, publicacion_id):
+    return render(request, 'editar_publicacion.html')
 
 
 # ---------- Historial ----------
-def mostrarHistorialAcciones(request):
+def mostrarHistorialAcciones(request, foro_id, publicacion_id):
     return render(request, 'historial_acciones.html')
 
 

@@ -6,9 +6,9 @@
         ForoVox</h1>
     </div>
     <ul class="flex gap-8">
-      <li class="hover:underline transition-all underline-offset-2"><a href="/login">Iniciar sesion</a></li>
-      <li class="hover:underline transition-all underline-offset-2"><a class="pointer-events-none"
-          href="">Registrate</a></li>
+      <li class="hover:underline transition-all underline-offset-2"><a href="{% url 'login' %}">Iniciar sesion</a></li>
+      <li class="hover:underline transition-all underline-offset-2"><a 
+          href="{% url 'signup' %}">Registrate</a></li>
     </ul>
   </div>
 </header>

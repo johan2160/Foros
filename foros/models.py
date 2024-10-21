@@ -37,7 +37,7 @@ class Foro(models.Model):
     tematica = models.ForeignKey(Tematica, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(default=timezone.now)
 
-class Post(models.Model):
+class Publicacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     foro = models.ForeignKey(Foro, on_delete=models.CASCADE)
     titulo = models.TextField(max_length=120)

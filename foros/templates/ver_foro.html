@@ -17,8 +17,8 @@ ForoVox | Ver Foro
         <h1 class="font-bold text-lg">{{foro.nombre}}</h1>
         <p class="text-sm">{{foro.descripcion}}</p>
         <div class="flex flex-wrap gap-4 mt-2">
-          <a href="/foro/crear_comentario/"
-            class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Crear Post <i
+          <a href="{% url 'crear_publicacion' foro.id %}"
+            class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Crear Publicación<i
               class="ri-add-line"></i></a>
           <button
             class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Abandonar
