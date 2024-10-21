@@ -263,8 +263,10 @@ def mostrarAdministrarTematicas(request):
 
 
 # ---------- Foro ----------
-def mostrarForo(request):
-    return render(request, 'ver_foro.html')
+def mostrarForo(request, id):
+    foro = Foro.objects.get(id = id)
+    datos = {'foro': foro}
+    return render(request, 'ver_foro.html', datos)
 
 def mostrarCrearForo(request):
     tematicas = Tematica.objects.all()
