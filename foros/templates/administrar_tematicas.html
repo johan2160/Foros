@@ -27,7 +27,7 @@ ForoVox | Administrar Temáticas
           </tr>
         </thead>
         <tbody>
-          {% for tematica in tematicas %}
+          {% for tematica in tematicas reversed %}
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
             <td class="text-left p-2">{{ tematica.nombre }}</td>
             <td class="text-right p-2">
