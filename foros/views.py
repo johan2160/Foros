@@ -374,7 +374,6 @@ def formCrearPublicacion(request, foro_id):
     try:
         publicacion = Publicacion(usuario = usuario, foro = foro, titulo =  titulo, texto = comentario)
         publicacion.save()
-        print(publicacion.usuario.nombres)
         
         publicaciones = Publicacion.objects.filter(foro = foro)
         datos = {
@@ -392,10 +391,39 @@ def formCrearPublicacion(request, foro_id):
 
 
 def mostrarEditarPublicacion(request, foro_id, publicacion_id):
-    return render(request, 'editar_publicacion.html')
+    foro = Foro.objects.get(id = foro_id)
+    publicacion = Publicacion.objects.get(id = publicacion_id)
+    datos = {'foro': foro, 'publicacion': publicacion}
+    return render(request, 'editar_publicacion.html', datos)
 
 def formEditarPublicacion(request, foro_id, publicacion_id):
-    return render(request, 'editar_publicacion.html')
+    titulo = request.POST['txtpubtit']
+    comentario = request.POST['txtpubcom']
+    foro = Foro.objects.get(id = foro_id)
+    
+    errores = {}
+    
+    try:
+        publicacion = Publicacion.objects.get(id = publicacion_id)
+        publicacion.titulo = titulo
+        publicacion.texto = comentario
+        publicacion.save()
+
+        publicaciones = Publicacion.objects.all()
+        
+        datos = {
+            'publicaciones': publicaciones,
+            'foro': foro,
+            'mensaje_exito': 'La publicacion fue actualizada correctamente!'
+        }
+        
+        return render(request, 'ver_foro.html', datos)
+    except Exception as e:
+        errores['db_error'] = f'Error al editar la publicacion: {str(e)}'
+        datos = {'errores': errores, 'foro': foro, 'publicacion': publicacion}
+        publicacion = Publicacion.objects.get(id = publicacion_id)
+        return render(request, 'editar_publicacion.html', datos)
+    
 
 
 # ---------- Historial ----------
