@@ -9,7 +9,7 @@ ForoVox | Ver Foro
 
 {% include 'components/admin-display.html' %}
 <div class="flex justify-center">
-  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[20.813rem]">
+  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
     <div class="flex gap-4">
       <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Imagen del foro"
         class="size-11 md:size-14 lg:size-16 rounded-full">
@@ -26,44 +26,31 @@ ForoVox | Ver Foro
         </div>
       </div>
     </div>
-    <div class="flex flex-col gap-5 mt-8 max-w-3xl">
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">cyberhumanx</h3>
-        </div>
-        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
-        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
-          recomiendan aprender
-          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
-          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
+    {% if mensaje_exito %}
+      <p>{{ mensaje_exito }}</p>
+    {% endif %}
+    {% if publicaciones %}
+
+      <div class="flex flex-col gap-5 mt-8 max-w-3xl">
+        {% for publicacion in publicaciones reversed %}
+          <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-4 transition-colors hover:bg-[#F1F3F8] 
+                      w-full h-48"> <!-- Establecer ancho y altura -->
+            <div class="flex items-center gap-2.5">
+              <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
+                class="size-9 rounded-full">
+              <h3 class="text-sm text-[#2A2A2A]">{{ publicacion.usuario.nombres }}</h3>
+            </div>
+            <h2 class="font-bold text-base">{{ publicacion.titulo }}</h2>
+            <p class="text-sm overflow-hidden text-ellipsis line-clamp-3"> <!-- Limitar el texto a 3 líneas -->
+              {{ publicacion.texto }}
+            </p>
+          </div>
+        {% endfor %}
       </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">codenewbie87</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Qué editor de código es mejor para principiantes?</h2>
-        <p class="text-sm">Soy nuevo en la programación y me gustaría saber qué editor de código recomiendan para
-          alguien que está empezando. He escuchado hablar de opciones como VS Code, Sublime Text, y Atom, pero no estoy
-          seguro de cuál es mejor para mi nivel. Busco algo que sea fácil de usar pero también potente para cuando vaya
-          aprendiendo más. ¿Alguna recomendación? ¡Gracias por la ayuda!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">cybil28</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Cuál es la mejor manera de practicar programación diariamente?</h2>
-        <p class="text-sm">Estoy buscando maneras efectivas de practicar programación todos los días para mejorar mis
-          habilidades. ¿Qué tipo de ejercicios o proyectos recomiendan para alguien que está aprendiendo? ¿Conocen
-          plataformas o retos que ayuden a fortalecer el pensamiento lógico y el dominio de lenguajes como Python o
-          JavaScript? Agradezco cualquier sugerencia para mantenerme motivado y seguir mejorando. ¡Gracias!</p>
-      </div>
-    </div>
+        
+    {% else %}
+      <h2 class="mt-10 text-end font-bold text-lg">Aún no hay ninguna publicación, ¡sé el primero en comentar!</h2>
+    {% endif %}
   </div>
 </div>
 
