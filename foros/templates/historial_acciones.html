@@ -5,7 +5,6 @@ ForoVox | Historial de Acciones
 {% endblock %}
 
 {% block content %}
-
 {% include 'components/admin-display.html' %}
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
@@ -15,46 +14,27 @@ ForoVox | Historial de Acciones
         <thead>
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
             <th class="text-left p-2 py-3.5">Id</th>
-            <th class="text-left p-2 py-3.5">Nombre</th>
+            <th class="text-left p-2 py-3.5">Usuario</th>
             <th class="text-left p-2 py-3.5">Acción</th>
             <th class="text-right p-2 py-3.5">Fecha y hora</th>
           </tr>
         </thead>
         <tbody>
+          {% for accion in historial reversed %}
           <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2 py-3.5">5</td>
-            <td class="text-left p-2 py-3.5">Admin</td>
-            <td class="text-left p-2 py-3.5">Eliminar cuenta de usuario</td>
-            <td class="text-right p-2 py-3.5">Sept. 18, 2024, 10:20 a.m</td>
+            <td class="text-left p-2 py-3.5">{{ accion.id }}</td>
+            <td class="text-left p-2 py-3.5">{{ accion.usuario.nombres }}</td>
+            <td class="text-left p-2 py-3.5">{{ accion.accion }}</td>
+            <td class="text-right p-2 py-3.5">{{ accion.fecha|date:"M. d, Y, g:i a" }}</td>
           </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2 py-3.5">4</td>
-            <td class="text-left p-2 py-3.5">messi10</td>
-            <td class="text-left p-2 py-3.5">Registrarse</td>
-            <td class="text-right p-2 py-3.5">Sept. 19, 2024, 11:45 a.m</td>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center p-2 py-3.5">No hay acciones registradas</td>
           </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2 py-3.5">3</td>
-            <td class="text-left p-2 py-3.5">cybil23</td>
-            <td class="text-left p-2 py-3.5">Crear post</td>
-            <td class="text-right p-2 py-3.5">Oct. 2, 2024, 3:30 p.m</td>
-          </tr>
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2 py-3.5">2</td>
-            <td class="text-left p-2 py-3.5">skills123</td>
-            <td class="text-left p-2 py-3.5">Cerrar sesión</td>
-            <td class="text-right p-2 py-3.5">Oct. 15, 2024, 9:10 a.m</td>
-          </tr>
-          <tr class="hover:bg-[#F1F3F8] transition-colors">
-            <td class="text-left p-2 py-3.5">1</td>
-            <td class="text-left p-2 py-3.5">hipnotron</td>
-            <td class="text-left p-2 py-3.5">Crear post</td>
-            <td class="text-right p-2 py-3.5">Nov. 7, 2024, 5:55 p.m</td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
 </div>
-
 {% endblock %}
