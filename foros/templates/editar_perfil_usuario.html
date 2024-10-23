@@ -31,16 +31,16 @@ ForoVox | Editar Perfil
             placeholder="Correo">
           <input name="txtnac" value={{ usuario.nacionalidad }} class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
             placeholder="Nacionalidad" required>
-          <input name="txtpas" class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
+          <input value={{ usuario.contraseña }} name="txtpas" class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
             placeholder="Contraseña" required>
-          <input name="txtpas2" class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
+          <input value={{ usuario.contraseña }} name="txtpas2" class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
             placeholder="Repetir contraseña" required>
           <div class="flex gap-6">
             <button type="submit"
               class="flex-1 rounded-lg bg-[#1c253b] text-center text-[#fafafa] py-2 transition-colors hover:bg-[#24304C]">Guardar
               cambios</button>
-            <button href="{% url 'perfil_usuario' usuario.id %}"
-              class="flex-1 transition-colors rounded-lg bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
+            <a href="{% url 'perfil_usuario' usuario.id %}"
+              class="flex-1 flex items-center justify-center transition-colors rounded-lg bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]"><span>Cancelar</span></a>
           </div>
         </div>
       </form>
