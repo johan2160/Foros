@@ -42,8 +42,14 @@ def formLogin(request):
         request.session["idUsuario"] = comprobarLogin[0]['id']
         request.session["nomUsuario"] = nom_usu  
         request.session["tipUsuario"] = tip_usu
+        
+        # Se registra en la tabla historial
+        accion = "Inicia sesión"
+        fecha = datetime.now()
+        usuario = request.session["idUsuario"]
+        his = Historial(accion = accion, fecha = fecha, usuario_id = usuario)
+        his.save()
 
-        # Redirigir al index
         return redirect('index')
     
     else:
