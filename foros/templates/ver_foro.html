@@ -26,8 +26,14 @@ ForoVox | Ver Foro
         </div>
       </div>
     </div>
-    {% if mensaje_exito %}
-      <p>{{ mensaje_exito }}</p>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
     {% if publicaciones %}
 
