@@ -22,8 +22,8 @@ ForoVox | Gestionar Usuarios
           </tr>
         </thead>
         <tbody>
-          {% for usuario in usuarios %}
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
+          {% for usuario in usuarios reversed %}
+          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors last:border-b-0">
             <td class="text-left p-2">{{ usuario.nombres }}</td>
             <td class="text-right p-2">
               <a href="{% url 'editar_usuario' usuario.id %}">
@@ -35,7 +35,7 @@ ForoVox | Gestionar Usuarios
                   class="rounded-md border border-[#1c253b] text-[#1c253b] p-1.5 transition-colors hover:bg-[#F2F2F2]">Ver</button>
               </a>
               <button
-                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+                class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Deshabilitar</button>
             </td>
           </tr>
           {% endfor %}
