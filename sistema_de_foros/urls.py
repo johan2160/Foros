@@ -22,6 +22,8 @@ urlpatterns = [
     path('form_crear_tematica/', views.formCrearTematica, name='form_crear_tematica'),
     path('editar_tematica/<int:id>', views.mostrarEditarTematica, name='editar_tematica'),
     path('form_editar_tematica/<int:id>', views.formEditarTematica, name='form_editar_tematica'),
+    path('eliminar_tematica/<int:id>', views.eliminarTematica, name='eliminar_tematica'),
+
     
     path('foro/<int:foro_id>', views.mostrarForo, name='foro'),
     path('crear_foro/', views.mostrarCrearForo, name='crear_foro'),
@@ -29,6 +31,7 @@ urlpatterns = [
     path('editar_foro/<int:id>', views.mostrarEditarForo, name='editar_foro'),
     path('form_editar_foro/<int:id>', views.formEditarForo, name='form_editar_foro'),
     path('administrar_foros/', views.mostrarAdministrarForos, name='administrar_foros'),
+    path('eliminar_foro/<int:id>', views.eliminarForo, name='eliminar_foro'),
     
     path('foro/<int:foro_id>/crear_publicacion', views.mostrarCrearPublicacion, name='crear_publicacion'),
     path('foro/<int:foro_id>/form_crear_publicacion', views.formCrearPublicacion, name='form_crear_publicacion'),
