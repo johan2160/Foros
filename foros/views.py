@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from datetime import datetime
 from .models import Usuario, Tematica, Foro, Publicacion, Historial, Palabrotas
 
 
@@ -37,7 +39,6 @@ def formLogin(request):
         nom_usu = comprobarLogin[0]['nombres']
         tip_usu = comprobarLogin[0]['tipo_usuario']
 
-        # Guardar datos en sesión
         request.session["estadoSesion"] = True
         request.session["idUsuario"] = comprobarLogin[0]['id']
         request.session["nomUsuario"] = nom_usu  
@@ -97,8 +98,15 @@ def formSignup(request):
             contraseña=pas_usu
         )
         usuario.save()
-        mensaje_exito = {'mensaje_exito': 'Usuario registrado correctamente!'}
-        return render(request, 'signup.html', mensaje_exito)
+        
+        accion = "Registro de usuario"
+        fecha = datetime.now()
+        usuario_hist = usuario.id  
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
+        his.save()  
+
+        request.session['mensaje_exito'] = 'Usuario registrado correctamente!'
+        return redirect('login')  # Redirige a login tras registro exitoso
         
     except Exception as e:
         errores['db_error'] = f'Error al crear el usuario: {str(e)}'
@@ -107,13 +115,15 @@ def formSignup(request):
 
 # ---------- Logout ----------
 def logout(request):
+    accion = "Cierre sesión"
+    fecha = datetime.now()
+    usuario = request.session["idUsuario"]
+    his = Historial(accion = accion, fecha = fecha, usuario_id = usuario)
+    his.save()
+    
     request.session.flush()  # Elimina toda la sesión
     
-    response = redirect('login')
-    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-    response['Pragma'] = 'no-cache'
-    response['Expires'] = '0'
-    
+    response = redirect('login')    
     return response
 
 
@@ -152,46 +162,36 @@ def formEditarPerfilUsuario(request, id):
     pas_usu = request.POST['txtpas']
     pas2_usu = request.POST['txtpas2']
 
-    usuario = Usuario.objects.get(id = id)
+    usuario = Usuario.objects.get(id=id)
 
     errores = {}
 
     if pas_usu != pas2_usu:
         errores['contraseña'] = 'Las contraseñas no coinciden.'
 
-    datos = {'errores': errores, 'usuario': usuario}
-
     if errores:
+        datos = {'errores': errores, 'usuario': usuario}
         return render(request, 'editar_perfil_usuario.html', datos)
-    
-    estadoSesion = request.session.get("estadoSesion")
-    if estadoSesion:
-        idUsuario = request.session.get("idUsuario")
-        nomUsuario = request.session.get("nomUsuario")
-        tipUsuario = request.session.get("tipUsuario")
-    
+
     try:
         usuario.nombres = nom_usu
         usuario.materno = apem_usu
         usuario.paterno = apep_usu
         usuario.nacionalidad = nac_usu
         usuario.contraseña = pas_usu
-
         usuario.save()
+        
+        accion = "Edición perfil"
+        fecha = datetime.now()
+        usuario_hist = request.session["idUsuario"]
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
+        his.save() 
 
-        datos = {
-            'usuario': usuario, 
-            'mensaje_exito': 'Usuario actualizado correctamente!',
-            'idUsuario': idUsuario,
-            'nomUsuario': nomUsuario,
-            'tipUsuario': tipUsuario,
-            
-            }
-
-        return render(request, 'perfil_usuario.html', datos)
+        return redirect('perfil_usuario', id=usuario.id)
     except Exception as e:
-        errores['db_error'] = f'Error al crear el usuario: {str(e)}'
-        return render(request, 'editar_perfil_usuario.html', {'errores': errores})
+        errores['db_error'] = f'Error al actualizar el usuario: {str(e)}'
+        datos = {'errores': errores, 'usuario': usuario}
+        return render(request, 'editar_perfil_usuario.html', datos)
     
 
 def mostrarGestionarUsuarios(request):
@@ -212,7 +212,7 @@ def formCrearTematica(request):
     errores = {}
 
     if verificarSiExiste(Tematica, 'nombre', nom_tematica):
-        errores['nombre'] = f'La tematica: {nom_tematica} ya existe, intente crear otra.'
+        errores['nombre'] = f'La tematica: {nom_tematica} ya existe.'
 
     if errores:
         return render(request, 'crear_tematica.html', {'errores': errores})
@@ -220,14 +220,18 @@ def formCrearTematica(request):
     try:
         tematica = Tematica(nombre=nom_tematica, descripcion=des_tematica)
         tematica.save()
+        
+        accion = "Creación de temática"
+        fecha = datetime.now()
+        usuario_hist = request.session["idUsuario"]
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
+        his.save() 
 
-        mensaje_exito = {'mensaje_exito': 'Tematica añadida correctamente!'}
-        return render(request, 'crear_tematica.html', mensaje_exito)
+        return redirect('administrar_tematicas')
     
     except Exception as e:
         errores['db_error'] = f'Error al crear la tematica: {str(e)}'
         return render(request, 'crear_tematica.html', {'errores': errores})
-
 
 def mostrarEditarTematica(request, id):
     tematica = Tematica.objects.get(id=id)
@@ -253,13 +257,44 @@ def formEditarTematica(request, id):
         tematica.nombre = nom_tematica
         tematica.descripcion = des_tematica
         tematica.save()
+        
+        accion = "Edición de temática"
+        fecha = datetime.now()
+        usuario_hist = request.session["idUsuario"]
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
+        his.save() 
 
-        datos = {'tematica': tematica, 'mensaje_exito': 'Tematica actualizada correctamente!'}
-        return render(request, 'editar_tematica.html', datos)
+        return redirect('administrar_tematicas')  # Redirige a la administración de temáticas tras editar exitosamente
     
     except Exception as e:
         errores['db_error'] = f'Error al editar la tematica: {str(e)}'
-        return render(request, 'editar_tematica.html', {'errores': errores})
+        tematica = Tematica.objects.get(id=id)
+        return render(request, 'editar_tematica.html', {'errores': errores, 'tematica': tematica})
+
+def eliminarTematica(request, id):
+    try:
+        tematica = Tematica.objects.get(id=id)
+        
+        accion = "Eliminación tematica"
+        fecha = datetime.now()
+        usuario = request.session["idUsuario"]
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
+        his.save()
+
+        tematica.delete()
+
+        tematicas = Tematica.objects.all()
+
+        datos = {
+            'mensaje_exito': 'Tematica eliminada correctamente!',
+            'tematicas': tematicas
+        }
+    except:
+        datos = {
+            'mensaje_error': 'La temática que intentas eliminar no existe.',
+            'tematicas': Tematica.objects.all() 
+        }
+    return render(request, 'administrar_tematicas.html', datos)
 
 
 def mostrarAdministrarTematicas(request):
@@ -297,11 +332,16 @@ def formCrearForo(request):
     
     try:
         tematica = Tematica.objects.get(id=tema_id)
-        foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica = tematica)
+        foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica=tematica)
         foro.save()
         
-        datos = {'tematicas': tematicas, 'mensaje_exito': 'Foro creado correctamente!'}
-        return render(request, 'crear_foro.html', datos)
+        accion = "Creación de foro"
+        fecha = datetime.now()
+        usuario_hist = request.session["idUsuario"]  # ID del usuario que crea el foro
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
+        his.save()
+
+        return redirect('administrar_foros')  # Redirigir a la administración de foros tras la creación exitosa
     
     except Exception as e:
         errores['db_error'] = f'Error al crear el foro: {str(e)}'
@@ -341,6 +381,12 @@ def formEditarForo(request, id):
         
         foro.save()
         
+        accion = "Edición foro"
+        fecha = datetime.now()
+        usuario = request.session["idUsuario"]
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
+        his.save()
+        
         foros = Foro.objects.all()
         datos = {'foros': foros, 'mensaje_exito': 'Foro actualizado correctamente!'}
         return render(request, 'administrar_foros.html', datos) 
@@ -352,11 +398,40 @@ def formEditarForo(request, id):
         datos = {'errores': errores, 'foro': foro, 'tematicas': tematicas}
         return render(request, 'editar_foro.html', datos)
 
-    
-
 def mostrarAdministrarForos(request):
     foros = Foro.objects.all()  
     datos = {'foros': foros}
+    return render(request, 'administrar_foros.html', datos)
+
+def eliminarForo(request, id):
+    try:
+        foro = Foro.objects.get(id=id)
+        
+        # Guardar la acción en el historial
+        accion = "Eliminación foro"
+        fecha = datetime.now()
+        usuario = request.session["idUsuario"]
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
+        his.save()
+
+        # Eliminar el foro
+        foro.delete()
+
+        # Obtener la lista de foros actualizada
+        foros = Foro.objects.all()
+
+        # Preparar los datos para la plantilla
+        datos = {
+            'mensaje_exito': 'Foro eliminado correctamente!',
+            'foros': foros 
+        }
+
+    except:
+        # En caso de que el foro no exista, mostramos un mensaje o redirigimos
+        datos = {
+            'mensaje_error': 'El foro que intentas eliminar no existe.',
+            'foros': Foro.objects.all()
+        }
     return render(request, 'administrar_foros.html', datos)
 
 
@@ -371,29 +446,26 @@ def formCrearPublicacion(request, foro_id):
     comentario = request.POST['txtpubcom']
     
     idUsuario = request.session.get("idUsuario")
-    usuario = Usuario.objects.get(id = idUsuario)
+    usuario = Usuario.objects.get(id=idUsuario)
     
-    errores = {}
-    
-    foro = Foro.objects.get(id = foro_id)
+    foro = Foro.objects.get(id=foro_id)
     
     try:
-        publicacion = Publicacion(usuario = usuario, foro = foro, titulo =  titulo, texto = comentario)
+        publicacion = Publicacion(usuario=usuario, foro=foro, titulo=titulo, texto=comentario)
         publicacion.save()
         
-        publicaciones = Publicacion.objects.filter(foro = foro)
-        datos = {
-            'publicaciones': publicaciones, 
-            'foro': foro, 
-            'mensaje_exito': 'Publicacion creada correctamente!'
-            }
-        
-        return render(request, 'ver_foro.html', datos)
+        accion = "Creación publicación"
+        fecha = datetime.now()
+        usuario = request.session["idUsuario"]
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
+        his.save()
+
+        return redirect('foro', foro_id=foro.id)
         
     except Exception as e:
-        errores['db_error'] = f'Error al crear la publicacion: {str(e)}'
-        datos = {'errores': errores, 'foro': foro}
-        return render(request, 'crear_publicacion.html', datos)
+        errores = {'db_error': f'Error al crear la publicacion: {str(e)}'}
+        return render(request, 'crear_publicacion.html', {'errores': errores, 'foro': foro})
+
 
 
 def mostrarEditarPublicacion(request, foro_id, publicacion_id):
@@ -403,38 +475,83 @@ def mostrarEditarPublicacion(request, foro_id, publicacion_id):
     return render(request, 'editar_publicacion.html', datos)
 
 def formEditarPublicacion(request, foro_id, publicacion_id):
-    titulo = request.POST['txtpubtit']
-    comentario = request.POST['txtpubcom']
-    foro = Foro.objects.get(id = foro_id)
-    
+    foro = Foro.objects.get(id=foro_id)
+    publicacion = Publicacion.objects.get(id=publicacion_id)
     errores = {}
-    
-    try:
-        publicacion = Publicacion.objects.get(id = publicacion_id)
+
+    if request.method == 'POST':
+        titulo = request.POST.get('txtpubtit')
+        comentario = request.POST.get('txtpubcom')
         publicacion.titulo = titulo
         publicacion.texto = comentario
-        publicacion.save()
+        
+        try:
+            publicacion.save()
+            
+            accion = "Edición de publicación"
+            fecha = datetime.now()
+            usuario = request.session["idUsuario"]  # Suponiendo que el idUsuario está en la sesión
+            his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
+            his.save()
+            
+            messages.success(request, 'La publicación ha sido actualizada exitosamente.')
+            # quiero mostrar un mensaje de exito (Como lo puedo lograr?)
+            return redirect('foro', foro_id=foro.id)
+        except Exception as e:
+            errores['db_error'] = f'Error al editar la publicación: {str(e)}'
 
-        publicaciones = Publicacion.objects.all()
+    datos = {
+        'errores': errores,
+        'foro': foro,
+        'publicacion': publicacion,
+    }
+    return render(request, 'editar_publicacion.html', datos)
+
+
+# ---------- Editar Foro ----------
+def formEditarForo(request, id):
+    nom_foro = request.POST['txtnomfor']
+    des_foro = request.POST['txtdesfor']
+    tema_id = request.POST['cbotem']  # ID de la temática seleccionada
+
+    errores = {}
+
+    if verificarSiExiste(Foro, 'nombre', nom_foro):
+        errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
         
-        datos = {
-            'publicaciones': publicaciones,
-            'foro': foro,
-            'mensaje_exito': 'La publicacion fue actualizada correctamente!'
-        }
+    if errores:
+        foro = Foro.objects.get(id=id)
+        tematicas = Tematica.objects.all()
+        datos = {'foro': foro, 'tematicas': tematicas, 'errores': errores}
+        return render(request, 'editar_foro.html', datos)
+    
+    try:
+        foro = Foro.objects.get(id=id)
+        foro.nombre = nom_foro
+        foro.descripcion = des_foro
+
+        # Obtener la instancia de la temática seleccionada
+        tematica = Tematica.objects.get(id=tema_id)
+        foro.tematica = tematica
         
-        return render(request, 'ver_foro.html', datos)
+        foro.save()
+
+        return redirect('administrar_foros')  # Redirigir a la administración de foros tras editar exitosamente
+        
     except Exception as e:
-        errores['db_error'] = f'Error al editar la publicacion: {str(e)}'
-        datos = {'errores': errores, 'foro': foro, 'publicacion': publicacion}
-        publicacion = Publicacion.objects.get(id = publicacion_id)
-        return render(request, 'editar_publicacion.html', datos)
+        errores['db_error'] = f'Error al editar el foro: {str(e)}'
+        foro = Foro.objects.get(id=id)
+        tematicas = Tematica.objects.all()
+        datos = {'errores': errores, 'foro': foro, 'tematicas': tematicas}
+        return render(request, 'editar_foro.html', datos)
     
 
 
 # ---------- Historial ----------
-def mostrarHistorialAcciones(request, foro_id, publicacion_id):
-    return render(request, 'historial_acciones.html')
+def mostrarHistorialAcciones(request):
+    historial = Historial.objects.all()
+    datos = { 'historial': historial }
+    return render(request, 'historial_acciones.html', datos)
 
 
 # ---------- Utilidades ----------
