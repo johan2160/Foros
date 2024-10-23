@@ -42,8 +42,8 @@ ForoVox | Editar Foro
         <button type="submit"
           class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Guardar
           cambios</button>
-        <button type="reset"
-          class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
+          <button onclick="window.location.href='http://127.0.0.1:8000/administrar_foros/';" type="button"
+            class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
       </div>
       {% if errores %}
         {% for value in errores.values %}
