@@ -10,33 +10,56 @@ ForoVox | Administrar Temáticas
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
     <h2 class="font-bold text-2xl mb-8">Administrar Temáticas</h2>
-    <a href="/crear_tematica/">
+    <a href="{% url 'crear_tematica' %}">
       <button
         class="p-[0.625rem] mb-8 rounded-lg text-sm bg-[#1c253b] text-[#fafafa] transition-colors hover:bg-[#24304C]">Crear
         Temática <i class="ri-add-line"></i></button>
     </a>
-    <div class="max-w-2xl w-full border rounded-md border-[#D9D9D9] mb-10">
 
-      {% if tematicas %}
+    <div class="w-full flex justify-between items-center mb-3 mt-1">
+      <div>
+        <div class="w-full max-w-sm min-w-[200px] relative">
+          <div class="relative">
+            <input id="searchInput"
+              class="bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
+              placeholder="Buscar temática..." />
+            <button class="absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded " type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"
+                class="w-8 h-8 text-slate-600">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <table class="w-full table-auto text-sm">
-        <thead class="">
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors">
-            <th class="text-left p-2">Temática</th>
-            <th class="text-right p-2">Moderación</th>
+    <div class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+      <table id="tematicaTable" class="w-full text-left table-auto min-w-max">
+        <thead>
+          <tr>
+            <th class="p-4 border-b border-slate-200 bg-slate-50">
+              <p class="text-sm font-normal leading-none text-slate-500">Temática</p>
+            </th>
+            <th class="p-4 border-b border-slate-200 bg-slate-50">
+              <p class="text-sm font-normal leading-none text-slate-500 text-end">Moderación</p>
+            </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tematicaTableBody">
           {% for tematica in tematicas reversed %}
-          <tr class="border-b border-[#D9D9D9] hover:bg-[#F1F3F8] transition-colors last:border-b-0">
-            <td class="text-left p-2">{{ tematica.nombre }}</td>
-            <td class="text-right p-2">
+          <tr class="hover:bg-slate-50 border-b border-slate-200">
+            <td class="p-4 py-5">
+              <p class="block font-semibold text-sm text-slate-800">{{ tematica.nombre }}</p>
+            </td>
+            <td class="p-4 py-5 text-right">
               <a href="{% url 'editar_tematica' tematica.id %}">
                 <button
-                  class="rounded-md bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
+                  class="rounded-md text-sm bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
               </a>
               <a href="{% url 'eliminar_tematica' tematica.id %}">
-                <button class="flex-1 rounded-md bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+                <button class="rounded-md text-sm bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
               </a>
             </td>
           </tr>
@@ -44,10 +67,95 @@ ForoVox | Administrar Temáticas
         </tbody>
       </table>
 
-      {% endif %}
-
+      <div class="flex justify-between items-center px-4 py-3">
+        <div class="text-sm text-slate-500" id="tableInfo">
+          Mostrando <b>1-5</b> de {{ tematicas|length }}
+        </div>
+        <div class="flex space-x-1">
+          <button id="prevBtn" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+            Prev
+          </button>
+          <button id="nextBtn" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const tematicaTableBody = document.getElementById('tematicaTableBody');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const tableInfo = document.getElementById('tableInfo');
+
+    let currentPage = 1;
+    const rowsPerPage = 5;
+
+    function filterTable() {
+      const filter = searchInput.value.toLowerCase();
+      const rows = tematicaTableBody.getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let match = false;
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j].innerText.toLowerCase().includes(filter)) {
+            match = true;
+            break;
+          }
+        }
+        rows[i].setAttribute('data-visible', match ? 'true' : 'false');
+      }
+    }
+
+    function updateTable() {
+      const rows = tematicaTableBody.getElementsByTagName('tr');
+      let totalRows = 0;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i].getAttribute('data-visible') === 'true') {
+          totalRows++;
+        }
+      }
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      let visibleRows = 0;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i].getAttribute('data-visible') === 'true') {
+          rows[i].style.display = (visibleRows >= start && visibleRows < end) ? '' : 'none';
+          visibleRows++;
+        } else {
+          rows[i].style.display = 'none';
+        }
+      }
+      tableInfo.innerHTML = `Mostrando <b>${Math.min(start + 1, totalRows)}-${Math.min(end, totalRows)}</b> de ${totalRows}`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = end >= totalRows;
+    }
+
+    searchInput.addEventListener('input', () => {
+      currentPage = 1;
+      filterTable();
+      updateTable();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentPage++;
+      updateTable();
+    });
+
+    filterTable();
+    updateTable();
+  });
+</script>
 
 {% endblock %}
