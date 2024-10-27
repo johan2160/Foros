@@ -10,7 +10,8 @@ ForoVox | Crear Foro
 {% include 'components/admin-display.html' %}
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
-    <form action="{% url 'form_crear_foro' %}" method="post" class="flex flex-col w-full max-w-lg">
+    <form action="{% url 'form_crear_foro' %}" method="post" enctype="multipart/form-data"
+      class="flex flex-col w-full max-w-lg">
       {% csrf_token %}
       <h1 class="text-2xl font-bold mb-10 text-start">Crear foro</h1>
       <div class="flex w-full items-center gap-3.5 mb-6">
@@ -19,7 +20,7 @@ ForoVox | Crear Foro
         <label for="input-file"
           class="text-sm rounded-md bg-[#EDEDED] p-2.5 cursor-pointer transition-colors hover:bg-[#E6E6E6]"><i
             class="ri-upload-line"></i> Subir imagen</label>
-        <input type="file" accept="image/jpeg, image/png, image/jpg" id="input-file" class="hidden">
+        <input type="file" accept="image/jpeg, image/png, image/jpg" id="input-file" name="imagen" class="hidden">
       </div>
       <div class="flex w-full flex-col gap-4">
         <input name="txtnomfor" type="text" placeholder="Nombre del Foro"
@@ -29,7 +30,7 @@ ForoVox | Crear Foro
         <select name="cbotem" class="py-2 px-2 bg-[#17191C] text-white rounded-md" required>
           <option value="">Seleccione tematica</option>
           {% for tematica in tematicas %}
-              <option value="{{ tematica.id }}">{{ tematica.nombre }}</option>
+          <option value="{{ tematica.id }}">{{ tematica.nombre }}</option>
           {% endfor %}
         </select>
       </div>
@@ -41,36 +42,49 @@ ForoVox | Crear Foro
       </div>
 
       {% if errores %}
-        {% for value in errores.values %}
+      {% for value in errores.values %}
 
-          <span class="mb-2 w-full max-w-lg px-2 py-2 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{ value }}</span>
+      <span
+        class="mb-2 w-full max-w-lg px-2 py-2 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{
+        value }}</span>
 
-        {% endfor %}
+      {% endfor %}
 
       {% endif %}
 
       {% if mensaje_exito %}
 
-        <div role="alert" class="mt-3 relative flex flex-col w-full p-3 text-sm text-white bg-green-600 rounded-md" id="alert">
-          <p class="flex text-base">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5 mr-2 mt-0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"></path></svg>
-            Felecitaciones!
-          </p>
-          <p class="ml-4 p-3">
-            {{ mensaje_exito }}
-          </p>
-          
-          <button class="flex items-center justify-center transition-all w-8 h-8 rounded-md text-white hover:bg-white/10 active:bg-white/10 absolute top-1.5 right-1.5" type="button" onclick="closeAlert()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-5 w-5" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
-        </div>
-        
-        <script>
-          function closeAlert() {
-            const alertElement = document.getElementById('alert');
-            alertElement.style.display = 'none';
-          }
-        </script>
+      <div role="alert" class="mt-3 relative flex flex-col w-full p-3 text-sm text-white bg-green-600 rounded-md"
+        id="alert">
+        <p class="flex text-base">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="h-5 w-5 mr-2 mt-0.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z">
+            </path>
+          </svg>
+          Felecitaciones!
+        </p>
+        <p class="ml-4 p-3">
+          {{ mensaje_exito }}
+        </p>
+
+        <button
+          class="flex items-center justify-center transition-all w-8 h-8 rounded-md text-white hover:bg-white/10 active:bg-white/10 absolute top-1.5 right-1.5"
+          type="button" onclick="closeAlert()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-5 w-5"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <script>
+        function closeAlert() {
+          const alertElement = document.getElementById('alert');
+          alertElement.style.display = 'none';
+        }
+      </script>
 
       {% endif %}
     </form>
@@ -84,7 +98,7 @@ ForoVox | Crear Foro
     fotoDePerfil.src = URL.createObjectURL(inputFile.files[0]);
   }
 
-  window.addEventListener('pageshow', function(event) {
+  window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
       // Si la página es mostrada desde la cache (navegar hacia atrás), la recargamos
       window.location.reload();
