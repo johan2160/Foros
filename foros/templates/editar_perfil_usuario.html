@@ -10,7 +10,7 @@ ForoVox | Editar Perfil
 {% include 'components/admin-display.html' %}
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[30rem]">
-    <div class="w-full max-w-md border border-[#D9D9D9] rounded-md p-5">
+    <div class="w-full max-w-md bg-white border border-slate-200 shadow-md rounded-md p-5">
       <div class="flex items-center gap-4 mb-16">
         <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario" class="size-20">
         <h2 class="font-bold text-2xl">{{ usuario.nombres }}</h2>
@@ -18,36 +18,45 @@ ForoVox | Editar Perfil
       <form action="{% url 'form_editar_usuario' usuario.id %}" method="POST">
         {% csrf_token %}
         <div class="flex flex-col gap-4 text-sm">
-          <input name="txtrut" disabled value={{ usuario.rut }} class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text" placeholder="Rut">
-          <input name="txtnom" value={{ usuario.nombres }} class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
-            placeholder="Nombres" required>
+          <input name="txtrut" disabled value={{ usuario.rut }}
+            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="text" placeholder="Rut">
+          <input name="txtnom" value={{ usuario.nombres }}
+            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="text" placeholder="Nombres"
+            required>
           <div class="flex gap-4">
-            <input name="txtapem" value={{ usuario.materno }} class="bg-[#fafafa] w-full border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
+            <input name="txtapem" value={{ usuario.materno }}
+              class="bg-white w-full border border-slate-300  rounded-lg py-2 text-center" type="text"
               placeholder="Apellido Materno" required>
-            <input name="txtapep" value={{ usuario.paterno }} class="bg-[#fafafa] w-full border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
+            <input name="txtapep" value={{ usuario.paterno }}
+              class="bg-white w-full border border-slate-300  rounded-lg py-2 text-center" type="text"
               placeholder="Apellidor Paterno" required>
           </div>
-          <input name="txtema" disabled value={{ usuario.correo }} class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="email"
-            placeholder="Correo">
-          <input name="txtnac" value={{ usuario.nacionalidad }} class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="text"
-            placeholder="Nacionalidad" required>
-          <input value={{ usuario.contraseña }} name="txtpas" class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
+          <input name="txtema" disabled value={{ usuario.correo }}
+            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="email" placeholder="Correo">
+          <input name="txtnac" value={{ usuario.nacionalidad }}
+            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="text" placeholder="Nacionalidad"
+            required>
+          <input value={{ usuario.contraseña }} name="txtpas"
+            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="password"
             placeholder="Contraseña" required>
-          <input value={{ usuario.contraseña }} name="txtpas2" class="bg-[#fafafa] border border-[#d9d9d9] rounded-lg py-2 text-center" type="password"
+          <input value={{ usuario.contraseña }} name="txtpas2"
+            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="password"
             placeholder="Repetir contraseña" required>
           <div class="flex gap-6">
             <button type="submit"
               class="flex-1 rounded-lg bg-[#1c253b] text-center text-[#fafafa] py-2 transition-colors hover:bg-[#24304C]">Guardar
               cambios</button>
             <a href="{% url 'perfil_usuario' usuario.id %}"
-              class="flex-1 flex items-center justify-center transition-colors rounded-lg bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]"><span>Cancelar</span></a>
+              class="flex-1 flex items-center justify-center transition-colors rounded-lg bg-white text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]"><span>Cancelar</span></a>
           </div>
         </div>
       </form>
       {% if errores %}
       {% for value in errores.values %}
 
-        <span class="mb-2 w-full max-w-[23rem] px-2 py-1 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{ value }}</span>
+      <span
+        class="mb-2 w-full max-w-[23rem] px-2 py-1 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{
+        value }}</span>
 
       {% endfor %}
       {% endif %}
