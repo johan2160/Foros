@@ -11,8 +11,13 @@ ForoVox | Ver Foro
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
     <div class="flex gap-4">
+      {% if foro.imagen %}
+      <img src="{{ foro.imagen.url }}" alt="Imagen del Foro" class="size-11 md:size-14 lg:size-16 rounded-full">
+      {% else %}
       <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Imagen del foro"
         class="size-11 md:size-14 lg:size-16 rounded-full">
+      {% endif %}
+
       <div class="flex flex-col gap-2 max-w-3xl">
         <h1 class="font-bold text-lg">{{foro.nombre}}</h1>
         <p class="text-sm">{{foro.descripcion}}</p>
@@ -27,35 +32,35 @@ ForoVox | Ver Foro
       </div>
     </div>
     {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="message {{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
+    <div class="messages">
+      {% for message in messages %}
+      <div class="message {{ message.tags }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
     {% endif %}
     {% if publicaciones %}
 
-      <div class="flex flex-col gap-5 mt-8 max-w-3xl w-full">
-        {% for publicacion in publicaciones reversed %}
-          <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-4 transition-colors hover:bg-[#F1F3F8] 
+    <div class="flex flex-col gap-5 mt-8 max-w-3xl w-full">
+      {% for publicacion in publicaciones reversed %}
+      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-4 transition-colors hover:bg-[#F1F3F8] 
                       w-full h-48">
-            <div class="flex items-center gap-2.5">
-              <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
-                class="size-9 rounded-full">
-              <h3 class="text-sm text-[#2A2A2A]">{{ publicacion.usuario.nombres }}</h3>
-            </div>
-            <h2 class="font-bold text-base">{{ publicacion.titulo }}</h2>
-            <p class="text-sm overflow-hidden text-ellipsis line-clamp-3">
-              {{ publicacion.texto }}
-            </p>
-          </div>
-        {% endfor %}
+        <div class="flex items-center gap-2.5">
+          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
+            class="size-9 rounded-full">
+          <h3 class="text-sm text-[#2A2A2A]">{{ publicacion.usuario.nombres }}</h3>
+        </div>
+        <h2 class="font-bold text-base">{{ publicacion.titulo }}</h2>
+        <p class="text-sm overflow-hidden text-ellipsis line-clamp-3">
+          {{ publicacion.texto }}
+        </p>
       </div>
-        
+      {% endfor %}
+    </div>
+
     {% else %}
-      <h2 class="mt-10 text-end font-bold text-lg">Aún no hay ninguna publicación, ¡sé el primero en comentar!</h2>
+    <h2 class="mt-10 text-end font-bold text-lg">Aún no hay ninguna publicación, ¡sé el primero en comentar!</h2>
     {% endif %}
   </div>
 </div>
