@@ -19,7 +19,7 @@ ForoVox | Perfil usuario
 
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[30rem]">
-    <div class="w-full max-w-md border border-[#D9D9D9] rounded-md p-5">
+    <div class="w-full max-w-md bg-white border border-slate-200 shadow-md rounded-md p-5">
       <div class="flex items-center gap-4 mb-16">
         <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario" class="size-20">
         <h2 class="font-bold text-2xl">{{ usuario.nombres }}</h2>
@@ -61,7 +61,8 @@ ForoVox | Perfil usuario
       </div>
       {% if mensaje_exito %}
 
-        <p class="mt-5 w-full max-w-[23rem] px-2 py-1 rounded-md  text-green-600 text-center bg-green-200 translate-y-2">{{ mensaje_exito }}</p>
+      <p class="mt-5 w-full max-w-[23rem] px-2 py-1 rounded-md  text-green-600 text-center bg-green-200 translate-y-2">
+        {{ mensaje_exito }}</p>
 
       {% endif %}
     </div>
