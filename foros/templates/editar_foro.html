@@ -1,7 +1,6 @@
 {% extends 'master.html' %}
 {% load static %}
 
-
 {% block title %}
 ForoVox | Editar Foro
 {% endblock %}
@@ -11,53 +10,64 @@ ForoVox | Editar Foro
 {% include 'components/admin-display.html' %}
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
-    <form action="{% url 'form_editar_foro' foro.id %}" method="post" class="flex flex-col w-full max-w-lg">
+    <form action="{% url 'form_editar_foro' foro.id %}" method="post" enctype="multipart/form-data"
+      class="flex flex-col w-full max-w-lg">
       {% csrf_token %}
       <h1 class="text-2xl font-bold mb-10 text-start">Editar foro</h1>
       <div class="flex w-full items-center gap-3.5 mb-6">
+        {% if foro.imagen %}
+        <img src="{{ foro.imagen.url }}" id="foto-de-perfil" alt="Imagen del Foro"
+          class="size-24 rounded-full object-cover">
+        {% else %}
         <img src="{% static 'imagenes/tabula_rasa.png' %}" id="foto-de-perfil" alt="Imagen del Foro"
           class="size-24 rounded-full object-cover">
+        {% endif %}
         <label for="input-file"
-          class="text-sm rounded-md bg-[#EDEDED] p-2.5 cursor-pointer transition-colors hover:bg-[#E6E6E6]"><i
-            class="ri-upload-line"></i> Modificar imagen</label>
-        <input type="file" accept="image/jpeg, image/png, image/jpg" id="input-file" class="hidden">
+          class="text-sm rounded-md bg-[#EDEDED] p-2.5 cursor-pointer transition-colors hover:bg-[#E6E6E6]">
+          <i class="ri-upload-line"></i> Modificar imagen
+        </label>
+        <input type="file" accept="image/jpeg, image/png, image/jpg" id="input-file" name="imagen" class="hidden">
       </div>
       <div class="flex w-full flex-col gap-4">
         <input value="{{ foro.nombre }}" name="txtnomfor" type="text" placeholder="Nombre del Foro"
           class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3">
         <textarea name="txtdesfor" placeholder="Descripción del Foro"
           class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 resize-none h-[16rem]">{{ foro.descripcion }}</textarea>
-          <select name="cbotem" class="py-2 px-2 bg-[#17191C] text-white rounded-md" required>
-            <option value="">Seleccione tematica</option>
-            {% for tematica in tematicas %}
-              {% if foro.tematica.id == tematica.id %}
-                <option value="{{ tematica.id }}" selected>{{ tematica.nombre }}</option>
-              {% else %}
-                  <option value="{{ tematica.id }}">{{ tematica.nombre }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
+        <select name="cbotem" class="py-2 px-2 bg-[#17191C] text-white rounded-md" required>
+          <option value="">Seleccione temática</option>
+          {% for tematica in tematicas %}
+          {% if foro.tematica.id == tematica.id %}
+          <option value="{{ tematica.id }}" selected>{{ tematica.nombre }}</option>
+          {% else %}
+          <option value="{{ tematica.id }}">{{ tematica.nombre }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
       </div>
       <div class="flex flex-wrap gap-4 mt-4">
-        <button type="submit"
-          class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Guardar
-          cambios</button>
-          <button onclick="window.location.href='http://127.0.0.1:8000/administrar_foros/';" type="button"
-            class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
+        <button type="submit" class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">
+          Guardar cambios
+        </button>
+        <button onclick="window.location.href='{% url 'administrar_foros' %}';" type="button"
+          class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">
+          Cancelar
+        </button>
       </div>
       {% if errores %}
-        {% for value in errores.values %}
-
-          <span class="mb-2 w-full max-w-lg px-2 py-2 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{ value }}</span>
-
-        {% endfor %}
-
+      {% for value in errores.values %}
+      <span
+        class="mb-2 w-full max-w-lg px-2 py-2 rounded-md text-red-600 text-center bg-red-200 translate-y-2 animation-">
+        {{ value }}
+      </span>
+      {% endfor %}
       {% endif %}
 
-      {% if mensaje_exito %}
-
-        <p class="w-full max-w-lg px-2 py-2 rounded-md  text-green-600 text-center bg-green-200 translate-y-2">{{ mensaje_exito }}</p>
-
+      {% if messages %}
+      {% for message in messages %}
+      <p class="w-full max-w-lg px-2 py-2 rounded-md text-green-600 text-center bg-green-200 translate-y-2">
+        {{ message }}
+      </p>
+      {% endfor %}
       {% endif %}
     </form>
   </div>
