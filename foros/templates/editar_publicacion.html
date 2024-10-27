@@ -15,19 +15,23 @@ ForoVox | Editar Publicacion
         class="size-11 md:size-14 lg:size-16 rounded-full">
       <h1 class="font-bold text-lg">{{ foro.nombre }}</h1>
     </div>
-    <form action="{% url 'form_editar_publicacion' foro.id publicacion.id %}" method="post" class="flex flex-col w-full max-w-lg">
+    <form action="{% url 'form_editar_publicacion' foro.id publicacion.id %}" method="post"
+      class="flex flex-col w-full max-w-lg">
       {% csrf_token %}
-      <h1 class="text-2xl font-bold mb-10 text-start">Editar Publicacion</h1>
+      <h1 class="text-2xl font-bold mb-10 text-start">Editar Publicación</h1>
       <div class="flex w-full flex-col">
-        <input value="{{ publicacion.titulo }}" name="txtpubtit" type="text" placeholder="Título" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 mb-4" required>
+        <input value="{{ publicacion.titulo }}" name="txtpubtit" type="text" placeholder="Título"
+          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 mb-4" required>
         <textarea name="txtpubcom" placeholder="Comentario"
-          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 resize-none h-[16rem]" required>{{ publicacion.texto }}</textarea>
+          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 resize-none h-[16rem]"
+          required>{{ publicacion.texto }}</textarea>
       </div>
       <div class="flex flex-wrap gap-4 mt-4">
         <button type="submit"
           class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Guardar cambios</button>
-        <button onclick="window.location.href='http://127.0.0.1:8000/foro/{{ foro.id }}';" type="button"
-        class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
+        <button onclick="window.location.href='http://127.0.0.1:8000/foro/{{ foro.id }}';" type="button" {%
+          url 'ver_foro' foro.id %}
+          class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Cancelar</button>
       </div>
     </form>
   </div>
