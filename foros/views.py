@@ -33,29 +33,48 @@ def formLogin(request):
     rut = request.POST["txtrut"]
     pas = request.POST["txtpas"]
 
-    comprobarLogin = Usuario.objects.filter(rut=rut, contraseña=pas).values()
+    try:
+        usuario = Usuario.objects.get(rut=rut)
+    except Usuario.DoesNotExist:
+        datos = {'mensaje_error': 'Usuario no encontrado.'}
+        return render(request, 'login.html', datos)
 
-    if comprobarLogin:
-        nom_usu = comprobarLogin[0]['nombres']
-        tip_usu = comprobarLogin[0]['tipo_usuario']
+    if usuario.estado == 'Suspendido':
+        datos = {'mensaje_error': 'Su cuenta está suspendida. Contacte al administrador.'}
+        return render(request, 'login.html', datos)
 
+    if usuario.contraseña == pas:
+        # Restablecer intentos fallidos
+        usuario.intentos_fallidos = 0
+        usuario.save()
+
+        # Iniciar sesión
         request.session["estadoSesion"] = True
-        request.session["idUsuario"] = comprobarLogin[0]['id']
-        request.session["nomUsuario"] = nom_usu  
-        request.session["tipUsuario"] = tip_usu
+        request.session["idUsuario"] = usuario.id
+        request.session["nomUsuario"] = usuario.nombres  
+        request.session["tipUsuario"] = usuario.tipo_usuario
         
-        # Se registra en la tabla historial
+        # Registrar en historial
         accion = "Inicia sesión"
         fecha = datetime.now()
-        usuario = request.session["idUsuario"]
-        his = Historial(accion = accion, fecha = fecha, usuario_id = usuario)
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario.id)
         his.save()
 
         return redirect('index')
-    
     else:
-        datos = {'mensaje_error': 'Error de rut y/o contraseña'}
+        usuario.intentos_fallidos += 1
+        usuario.save()
+
+        if usuario.intentos_fallidos >= 3:
+            usuario.estado = 'Suspendido'
+            usuario.save()
+            datos = {'mensaje_error': 'Su cuenta ha sido suspendida por múltiples intentos fallidos.'}
+        else:
+            intentos_restantes = 3 - usuario.intentos_fallidos
+            datos = {'mensaje_error': f'Contraseña incorrecta. Intentos restantes: {intentos_restantes}'}
+        
         return render(request, 'login.html', datos)
+
 
 
 # ---------- Signup ----------
