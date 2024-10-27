@@ -33,7 +33,7 @@ class Tematica(models.Model):
 class Foro(models.Model):
     nombre = models.TextField(max_length=30, unique=True)
     descripcion = models.TextField(max_length=460)
-    imagen_url = models.URLField(null=True, blank=True)
+    imagen = models.ImageField(upload_to='foros/', null=True, blank=True)
     tematica = models.ForeignKey(Tematica, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(default=timezone.now)
 
