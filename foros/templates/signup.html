@@ -9,49 +9,74 @@ ForoVox | Sign Up
 {% include 'components/header-nosession.html' %}
 
 <main class="flex flex-col items-center">
-  <h2 class="text-2xl font-bold mt-12">Crea una cuenta </h2>
-  <p class="text-[#666666] mt-1.5 text-center">Rellena el formulario para poder registrarte</p>
-  <form action="{% url 'form_signup' %}" method="post" class="mt-8 px-4">
-    {% csrf_token %}
-    <div class="flex flex-col max-w-[23rem] gap-4">
-      <input name="txtrut" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="text" placeholder="Rut"
-        required>
-      <input name="txtnom" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="text" placeholder="Nombres"
-        required>
-      <div class="flex gap-4">
-        <input name="txtapem" class="bg-[#fafafa] w-full border border-[#B4B4B4] rounded-lg py-2 text-center" type="text"
-          placeholder="Apellido Materno" required>
-        <input name="txtapep" class="bg-[#fafafa] w-full border border-[#B4B4B4] rounded-lg py-2 text-center" type="text"
-          placeholder="Apellidor Paterno" required>
+  <div class="w-full max-w-md bg-white border border-slate-200 shadow-md rounded-md p-6 mt-12">
+    <h2 class="text-2xl font-bold text-center">Crea una cuenta</h2>
+    <p class="text-[#666666] mt-1.5 text-center">Rellena el formulario para poder registrarte</p>
+    <form action="{% url 'form_signup' %}" method="post" class="mt-8 px-4">
+      {% csrf_token %}
+      <div class="flex flex-col max-w-[23rem] gap-6">
+        <div class="w-full max-w-sm min-w-[200px]">
+          <input name="txtrut" type="text"
+            class="w-full bg-transparent text-center placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            placeholder="Rut" required>
+        </div>
+        <div class="w-full max-w-sm min-w-[200px]">
+          <input name="txtnom" type="text"
+            class="w-full bg-transparent text-center placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            placeholder="Nombres" required>
+        </div>
+        <div class="flex gap-4 w-full">
+          <div class="w-full">
+            <input name="txtapem" type="text"
+              class="w-full bg-transparent text-center placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+              placeholder="Apellido Materno" required>
+          </div>
+          <div class="w-full">
+            <input name="txtapep" type="text"
+              class="w-full bg-transparent text-center placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+              placeholder="Apellido Paterno" required>
+          </div>
+        </div>
+        <div class="w-full max-w-sm min-w-[200px]">
+          <input name="txtema" type="email"
+            class="w-full bg-transparent text-center placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            placeholder="Correo" required>
+        </div>
+        <div class="w-full max-w-sm min-w-[200px]">
+          <input name="txtnac" type="text"
+            class="w-full bg-transparent text-center placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            placeholder="Nacionalidad" required>
+        </div>
+        <div class="w-full max-w-sm min-w-[200px]">
+          <input name="txtpas" type="password"
+            class="w-full bg-transparent text-center placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            placeholder="Contraseña" required>
+        </div>
+        <div class="w-full max-w-sm min-w-[200px]">
+          <input name="txtpas2" type="password"
+            class="w-full bg-transparent text-center placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            placeholder="Repetir contraseña" required>
+        </div>
+        <button type="submit"
+          class="bg-[#10182B] text-white hover:bg-[#24304C] text-sm rounded-lg py-2 text-center">Registrar</button>
       </div>
-      <input name="txtema" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="email" placeholder="Correo"
-        required>
-      <input name="txtnac" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="text"
-        placeholder="Nacionalidad" required>
-      <input name="txtpas" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="password"
-        placeholder="Contraseña" required>
-      <input name="txtpas2" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg py-2 text-center" type="password"
-        placeholder="Repetir contraseña" required>
-      <button type="submit"
-        class="bg-[#10182B] text-white hover:bg-[#24304C] rounded-lg py-2 text-center">Registrar</button>
-    </div>
-  </form>
-  <p class="mt-5 mb-5 text-[#666666] text-center">Ya tienes una cuenta? <a href="/login"
-      class="text-black hover:underline underline-offset-2">Inicia Sesión</a></p>
+    </form>
+    <p class="mt-5 mb-5 text-[#666666] text-center">Ya tienes una cuenta? <a href="/login"
+        class="text-black hover:underline underline-offset-2">Inicia sesión</a></p>
 
-  {% if errores %}
-  {% for value in errores.values %}
+    {% if errores %}
+    {% for value in errores.values %}
+    <span
+      class="mb-2 w-full max-w-[23rem] px-2 py-1 rounded-md text-red-600 text-center bg-red-200 translate-y-2 animation-">{{
+      value }}</span>
+    {% endfor %}
+    {% endif %}
 
-    <span class="mb-2 w-full max-w-[23rem] px-2 py-1 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{ value }}</span>
-
-  {% endfor %}
-  {% endif %}
-
-  {% if mensaje_exito %}
-
-  <p class="mt-5 w-full max-w-[23rem] px-2 py-1 rounded-md  text-green-600 text-center bg-green-200 translate-y-2">{{ mensaje_exito }}</p>
-
-  {% endif %}
+    {% if mensaje_exito %}
+    <p class="mt-5 w-full max-w-[23rem] px-2 py-1 rounded-md text-green-600 text-center bg-green-200 translate-y-2">{{
+      mensaje_exito }}</p>
+    {% endif %}
+  </div>
 </main>
 
 {% endblock %}
