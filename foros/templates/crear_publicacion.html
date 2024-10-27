@@ -12,15 +12,20 @@ ForoVox | Crear Publicacion
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
     <div class="flex w-full max-w-lg items-center gap-4 mb-10">
+      {% if foro.imagen %}
+      <img src="{{ foro.imagen.url }}" alt="Imagen del Foro" class="size-11 md:size-14 lg:size-16 rounded-full">
+      {% else %}
       <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Imagen del foro"
         class="size-11 md:size-14 lg:size-16 rounded-full">
+      {% endif %}
       <h1 class="font-bold text-lg">{{ foro.nombre }}</h1>
     </div>
     <form action="{% url 'form_crear_publicacion' foro.id %}" method="post" class="flex flex-col w-full max-w-lg">
       {% csrf_token %}
-      <h1 class="text-2xl font-bold mb-10 text-start">Crear Publicacion</h1>
+      <h1 class="text-2xl font-bold mb-10 text-start">Crear Publicación</h1>
       <div class="flex w-full flex-col">
-        <input name="txtpubtit" type="text" placeholder="Título" class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 mb-4" required>
+        <input name="txtpubtit" type="text" placeholder="Título"
+          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 mb-4" required>
         <textarea name="txtpubcom" placeholder="Comentario"
           class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 resize-none h-[16rem]" required></textarea>
       </div>
@@ -31,7 +36,7 @@ ForoVox | Crear Publicacion
           class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Limpiar</button>
       </div>
       {% if errores %}
-        <p>{{ errores }}</p>
+      <p>{{ errores }}</p>
       {% endif %}
     </form>
   </div>
