@@ -333,7 +333,6 @@ def mostrarCrearForo(request):
     tematicas = Tematica.objects.all()
     datos = {'tematicas': tematicas}
     return render(request, 'crear_foro.html', datos)
-
 def formCrearForo(request):
     nom_foro = request.POST['txtnomfor']
     des_foro = request.POST['txtdesfor']
@@ -416,6 +415,7 @@ def formEditarForo(request, id):
         tematicas = Tematica.objects.all()
         datos = {'errores': errores, 'foro': foro, 'tematicas': tematicas}
         return render(request, 'editar_foro.html', datos)
+
 
 def mostrarAdministrarForos(request):
     foros = Foro.objects.all()  
@@ -524,46 +524,7 @@ def formEditarPublicacion(request, foro_id, publicacion_id):
         'foro': foro,
         'publicacion': publicacion,
     }
-    return render(request, 'editar_publicacion.html', datos)
-
-
-# ---------- Editar Foro ----------
-def formEditarForo(request, id):
-    nom_foro = request.POST['txtnomfor']
-    des_foro = request.POST['txtdesfor']
-    tema_id = request.POST['cbotem']  # ID de la temática seleccionada
-
-    errores = {}
-
-    if verificarSiExiste(Foro, 'nombre', nom_foro):
-        errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
-        
-    if errores:
-        foro = Foro.objects.get(id=id)
-        tematicas = Tematica.objects.all()
-        datos = {'foro': foro, 'tematicas': tematicas, 'errores': errores}
-        return render(request, 'editar_foro.html', datos)
-    
-    try:
-        foro = Foro.objects.get(id=id)
-        foro.nombre = nom_foro
-        foro.descripcion = des_foro
-
-        # Obtener la instancia de la temática seleccionada
-        tematica = Tematica.objects.get(id=tema_id)
-        foro.tematica = tematica
-        
-        foro.save()
-
-        return redirect('administrar_foros')  # Redirigir a la administración de foros tras editar exitosamente
-        
-    except Exception as e:
-        errores['db_error'] = f'Error al editar el foro: {str(e)}'
-        foro = Foro.objects.get(id=id)
-        tematicas = Tematica.objects.all()
-        datos = {'errores': errores, 'foro': foro, 'tematicas': tematicas}
-        return render(request, 'editar_foro.html', datos)
-    
+    return render(request, 'editar_publicacion.html', datos)  
 
 
 # ---------- Historial ----------
