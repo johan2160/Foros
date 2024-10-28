@@ -18,9 +18,10 @@ ForoVox | Gestionar Usuarios
             <input id="searchInput"
               class="bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
               placeholder="Buscar usuario..." />
-            <button class="absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded " type="button">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"
-                class="w-8 h-8 text-slate-600">
+            <button class="absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded "
+              type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
+                stroke="currentColor" class="w-8 h-8 text-slate-600">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
@@ -30,7 +31,8 @@ ForoVox | Gestionar Usuarios
       </div>
     </div>
 
-    <div class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+    <div
+      class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
       <table id="usuarioTable" class="w-full text-left table-auto min-w-max">
         <thead>
           <tr>
@@ -58,7 +60,7 @@ ForoVox | Gestionar Usuarios
                   class="text-sm rounded-md border border-[#1c253b] text-[#1c253b] p-1.5 transition-colors hover:bg-[#F2F2F2]">Ver</button>
               </a>
               <button
-                class="flex-1 text-sm rounded-md text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Deshabilitar</button>
+                class="text-sm rounded-md bg-[#ec2c2c] text-[#fafafa] p-1.5 transition-colors hover:bg-[#EE4444]">Deshabilitar</button>
             </td>
           </tr>
           {% endfor %}
@@ -70,10 +72,12 @@ ForoVox | Gestionar Usuarios
           Mostrando <b>1-5</b> de {{ usuarios|length }}
         </div>
         <div class="flex space-x-1">
-          <button id="prevBtn" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+          <button id="prevBtn"
+            class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
             Prev
           </button>
-          <button id="nextBtn" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+          <button id="nextBtn"
+            class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
             Next
           </button>
         </div>
