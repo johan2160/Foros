@@ -19,50 +19,107 @@ ForoVox | Ver Foro
       {% endif %}
 
       <div class="flex flex-col gap-2 max-w-3xl">
-        <h1 class="font-bold text-lg">{{foro.nombre}}</h1>
-        <p class="text-sm">{{foro.descripcion}}</p>
+        <h1 class="font-bold text-lg">{{ foro.nombre }}</h1>
+        <p class="text-sm">{{ foro.descripcion }}</p>
         <div class="flex flex-wrap gap-4 mt-2">
           <a href="{% url 'crear_publicacion' foro.id %}"
-            class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Crear Publicación<i
-              class="ri-add-line"></i></a>
+            class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Crear Publicación
+            <i class="ri-add-line"></i></a>
           <button
             class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Abandonar
             Foro</button>
         </div>
       </div>
     </div>
-    {% if messages %}
-    <div class="messages">
-      {% for message in messages %}
-      <div class="message {{ message.tags }}">
-        {{ message }}
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
     {% if publicaciones %}
-
     <div class="flex flex-col gap-5 mt-8 max-w-3xl w-full">
       {% for publicacion in publicaciones reversed %}
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-4 transition-colors hover:bg-[#F1F3F8] 
-                      w-full h-48">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">{{ publicacion.usuario.nombres }}</h3>
+      <div
+        class="flex flex-col gap-3 rounded-lg bg-white border border-slate-200 shadow-md p-4 transition-colors hover:bg-[#F1F3F8] w-full">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
+              class="size-9 rounded-full">
+            <h3 class="text-sm text-[#2A2A2A]">{{ publicacion.usuario.nombres }}</h3>
+          </div>
+          <div class="relative">
+            <div
+              class="flex items-center justify-center w-8 h-8 rounded-full text-slate-600 transition-colors hover:bg-slate-200 cursor-pointer hover:text-slate-800 focus:ring focus:ring-slate-200 active:bg-slate-200 disabled:opacity-50 disabled:pointer-events-none"
+              data-popover-target="postMenu-{{ forloop.counter }}" tabindex="0">
+              <i class="ri-more-fill text-lg"></i>
+            </div>
+            <ul role="menu" data-popover="postMenu-{{ forloop.counter }}" data-popover-placement="bottom"
+              class="absolute z-10 min-w-[180px] top-full right-0 mt-2 overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg focus:outline-none hidden">
+              <li role="menuitem"
+                class="cursor-pointer text-slate-800 flex items-center gap-2 w-full text-sm rounded-md p-3 transition-all hover:bg-slate-100">
+                <i class="ri-eye-line text-lg"></i>
+                Ver post
+              </li>
+              <li role="menuitem"
+                class="cursor-pointer text-slate-800 flex items-center gap-2 w-full text-sm rounded-md p-3 transition-all hover:bg-slate-100">
+                <i class="ri-edit-line text-lg"></i>
+                Editar post
+              </li>
+              <li role="menuitem"
+                class="cursor-pointer text-red-600 flex items-center gap-2 w-full text-sm rounded-md p-3 transition-all hover:bg-red-100">
+                <i class="ri-delete-bin-6-line text-lg"></i>
+                Eliminar post
+              </li>
+            </ul>
+          </div>
         </div>
-        <h2 class="font-bold text-base">{{ publicacion.titulo }}</h2>
-        <p class="text-sm overflow-hidden text-ellipsis line-clamp-3">
-          {{ publicacion.texto }}
-        </p>
+
+        <a href="">
+          <h2 class="font-bold text-lg text-[#1c253b]">{{ publicacion.titulo }}</h2>
+        </a>
+
+        <p class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-3">{{ publicacion.texto }}</p>
+
+        <p class="text-xs text-slate-500 mt-2">{{ publicacion.fecha }}</p>
       </div>
       {% endfor %}
     </div>
 
     {% else %}
-    <h2 class="mt-10 text-end font-bold text-lg">Aún no hay ninguna publicación, ¡sé el primero en comentar!</h2>
+    <h2 class="mt-10 text-end font-bold text-lg">¡Aún no hay ninguna publicación, sé el primero en comentar!</h2>
     {% endif %}
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_scripts %}
+{% verbatim %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuIcons = document.querySelectorAll('[data-popover-target]');
+
+    menuIcons.forEach((menuIcon) => {
+      const menuId = menuIcon.getAttribute('data-popover-target');
+      const menu = document.querySelector(`[data-popover="${menuId}"]`);
+
+      menuIcon.addEventListener('click', (event) => {
+        event.stopPropagation();
+        menu.classList.toggle('hidden');
+      });
+
+      if (menu) {
+        menu.addEventListener('click', (event) => {
+          event.stopPropagation();
+        });
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      menuIcons.forEach((menuIcon) => {
+        const menuId = menuIcon.getAttribute('data-popover-target');
+        const menu = document.querySelector(`[data-popover="${menuId}"]`);
+        if (menu && !menu.contains(event.target) && !menuIcon.contains(event.target)) {
+          menu.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
+{% endverbatim %}
 {% endblock %}
