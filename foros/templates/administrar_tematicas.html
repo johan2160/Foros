@@ -61,7 +61,7 @@ ForoVox | Administrar Temáticas
                   class="rounded-md text-sm bg-[#1c253b] text-[#fafafa] p-1.5 transition-colors hover:bg-[#24304C]">Editar</button>
               </a>
               <button data-url="{% url 'eliminar_tematica' tematica.id %}"
-                class="delete-thematica-btn rounded-md text-sm bg-[#fafafa] text-[#ec2c2c] border border-[#ec2c2c] p-1.5 transition-colors hover:bg-[#F2F2F2]">Eliminar</button>
+                class="delete-tematica-btn text-sm rounded-md bg-[#ec2c2c] text-[#fafafa] p-1.5 transition-colors hover:bg-[#EE4444]">Eliminar</button>
             </td>
           </tr>
           {% endfor %}
@@ -102,7 +102,7 @@ ForoVox | Administrar Temáticas
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const deleteButtons = document.querySelectorAll('.delete-thematica-btn');
+    const deleteButtons = document.querySelectorAll('.delete-tematica-btn');
     const deleteModal = document.getElementById('deleteModal');
     const cancelButton = document.getElementById('cancelButton');
     const confirmDeleteButton = document.getElementById('confirmDeleteButton');
