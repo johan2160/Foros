@@ -1,7 +1,6 @@
 {% extends 'master.html' %}
 {% load static %}
 
-
 {% block title %}
 ForoVox | Editar Temática
 {% endblock %}
@@ -17,9 +16,9 @@ ForoVox | Editar Temática
       <h1 class="text-2xl font-bold mb-10 text-start">Editar temática</h1>
       <div class="flex w-full flex-col">
         <input name="txtnomtem" value="{{ tematica.nombre }}" type="text" placeholder="Nombre de la temática"
-          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 mb-4">
+          class="w-full bg-transparent text-left placeholder:text-slate-400 text-slate-700 border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow mb-4">
         <textarea name="txtdestem" placeholder="Descripción de la temática"
-          class="bg-[#fafafa] border border-[#B4B4B4] rounded-lg p-3 resize-none h-[16rem]">{{ tematica.descripcion }}</textarea>
+          class="w-full bg-transparent text-left placeholder:text-slate-400 text-slate-700 border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow resize-none h-[16rem]">{{ tematica.descripcion }}</textarea>
       </div>
       <div class="flex flex-wrap gap-4 mt-4 mb-5">
         <button type="submit"
@@ -31,17 +30,20 @@ ForoVox | Editar Temática
     </form>
 
     {% if errores %}
-      {% for value in errores.values %}
+    {% for value in errores.values %}
 
-        <span class="mb-2 w-full max-w-lg px-2 py-2 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{ value }}</span>
+    <span
+      class="mb-2 w-full max-w-lg px-2 py-2 rounded-md  text-red-600 text-center bg-red-200 translate-y-2 animation-">{{
+      value }}</span>
 
-      {% endfor %}
+    {% endfor %}
 
     {% endif %}
 
     {% if mensaje_exito %}
 
-      <p class="w-full max-w-lg px-2 py-2 rounded-md  text-green-600 text-center bg-green-200 translate-y-2">{{ mensaje_exito }}</p>
+    <p class="w-full max-w-lg px-2 py-2 rounded-md  text-green-600 text-center bg-green-200 translate-y-2">{{
+      mensaje_exito }}</p>
 
     {% endif %}
 
