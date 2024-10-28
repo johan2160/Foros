@@ -48,7 +48,7 @@ ForoVox | Editar Foro
         <button type="submit" class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">
           Guardar cambios
         </button>
-        <button onclick="window.location.href='{% url 'administrar_foros' %}';" type="button"
+        <button onclick="window.location.href='http://127.0.0.1:8000/administrar_foros/'" type="button"
           class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">
           Cancelar
         </button>
@@ -61,14 +61,6 @@ ForoVox | Editar Foro
       </span>
       {% endfor %}
       {% endif %}
-
-      {% if messages %}
-      {% for message in messages %}
-      <p class="w-full max-w-lg px-2 py-2 rounded-md text-green-600 text-center bg-green-200 translate-y-2">
-        {{ message }}
-      </p>
-      {% endfor %}
-      {% endif %}
     </form>
   </div>
 </div>
@@ -79,8 +71,6 @@ ForoVox | Editar Foro
   inputFile.onchange = () => {
     fotoDePerfil.src = URL.createObjectURL(inputFile.files[0]);
   }
-
 </script>
-
 
 {% endblock %}

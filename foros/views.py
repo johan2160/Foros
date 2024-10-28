@@ -372,49 +372,60 @@ def mostrarEditarForo(request, id):
     datos = {'foro': foro, 'tematicas': tematicas}
     return render(request, 'editar_foro.html', datos)
 
+# views.py
+
 def formEditarForo(request, id):
-    nom_foro = request.POST['txtnomfor']
-    des_foro = request.POST['txtdesfor']
-    tema_id = request.POST['cbotem']  # ID de la temática seleccionada
+    if request.method == 'POST':
+        nom_foro = request.POST['txtnomfor']
+        des_foro = request.POST['txtdesfor']
+        tema_id = request.POST['cbotem']
+        imagen = request.FILES.get('imagen')  # Obtener el archivo de imagen si se subió uno
 
-    errores = {}
+        errores = {}
 
-    if verificarSiExiste(Foro, 'nombre', nom_foro):
-        errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+        # Verificar si el nombre del foro ya existe en otro foro (excluyendo el actual)
+        if Foro.objects.filter(nombre=nom_foro).exclude(id=id).exists():
+            errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
         
-    if errores:
-        foro = Foro.objects.get(id=id)
-        tematicas = Tematica.objects.all()
-        datos = {'foro': foro, 'tematicas': tematicas, 'errores': errores}
-        return render(request, 'editar_foro.html', datos)
-    
-    try:
-        foro = Foro.objects.get(id=id)
-        foro.nombre = nom_foro
-        foro.descripcion = des_foro
+        if errores:
+            foro = Foro.objects.get(id=id)
+            tematicas = Tematica.objects.all()
+            datos = {'foro': foro, 'tematicas': tematicas, 'errores': errores}
+            return render(request, 'editar_foro.html', datos)
+        
+        try:
+            foro = Foro.objects.get(id=id)
+            foro.nombre = nom_foro
+            foro.descripcion = des_foro
 
-        # Obtener la instancia de la temática seleccionada
-        tematica = Tematica.objects.get(id=tema_id)
-        foro.tematica = tematica
+            # Obtener la instancia de la temática seleccionada
+            tematica = Tematica.objects.get(id=tema_id)
+            foro.tematica = tematica
+
+            if imagen:
+                foro.imagen = imagen  # Actualizar la imagen si se subió una nueva
+
+            foro.save()
+            
+            accion = "Edición foro"
+            fecha = datetime.now()
+            usuario = request.session["idUsuario"]
+            his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
+            his.save()
+            
+            # Redirigir al usuario a la página de administración de foros con un mensaje de éxito
+            messages.success(request, 'Foro actualizado correctamente!')
+            return redirect('administrar_foros')
         
-        foro.save()
-        
-        accion = "Edición foro"
-        fecha = datetime.now()
-        usuario = request.session["idUsuario"]
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
-        his.save()
-        
-        foros = Foro.objects.all()
-        datos = {'foros': foros, 'mensaje_exito': 'Foro actualizado correctamente!'}
-        return render(request, 'administrar_foros.html', datos) 
-    
-    except Exception as e:
-        errores['db_error'] = f'Error al editar el foro: {str(e)}'
-        foro = Foro.objects.get(id=id)
-        tematicas = Tematica.objects.all()
-        datos = {'errores': errores, 'foro': foro, 'tematicas': tematicas}
-        return render(request, 'editar_foro.html', datos)
+        except Exception as e:
+            errores['db_error'] = f'Error al editar el foro: {str(e)}'
+            foro = Foro.objects.get(id=id)
+            tematicas = Tematica.objects.all()
+            datos = {'errores': errores, 'foro': foro, 'tematicas': tematicas}
+            return render(request, 'editar_foro.html', datos)
+    else:
+        return redirect('editar_foro', id=id)
+
 
 
 def mostrarAdministrarForos(request):
