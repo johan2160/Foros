@@ -18,30 +18,52 @@ ForoVox | Editar Perfil
       <form action="{% url 'form_editar_usuario' usuario.id %}" method="POST">
         {% csrf_token %}
         <div class="flex flex-col gap-4 text-sm">
-          <input name="txtrut" disabled value={{ usuario.rut }}
-            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="text" placeholder="Rut">
-          <input name="txtnom" value={{ usuario.nombres }}
-            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="text" placeholder="Nombres"
-            required>
-          <div class="flex gap-4">
-            <input name="txtapem" value={{ usuario.materno }}
-              class="bg-white w-full border border-slate-300  rounded-lg py-2 text-center" type="text"
-              placeholder="Apellido Materno" required>
-            <input name="txtapep" value={{ usuario.paterno }}
-              class="bg-white w-full border border-slate-300  rounded-lg py-2 text-center" type="text"
-              placeholder="Apellidor Paterno" required>
+          <div class="w-full">
+            <input name="txtrut" disabled value="{{ usuario.rut }}"
+              class="w-full text-center bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+              type="text" placeholder="Rut">
           </div>
-          <input name="txtema" disabled value={{ usuario.correo }}
-            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="email" placeholder="Correo">
-          <input name="txtnac" value={{ usuario.nacionalidad }}
-            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="text" placeholder="Nacionalidad"
-            required>
-          <input value={{ usuario.contraseña }} name="txtpas"
-            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="password"
-            placeholder="Contraseña" required>
-          <input value={{ usuario.contraseña }} name="txtpas2"
-            class="bg-white border border-slate-300  rounded-lg py-2 text-center" type="password"
-            placeholder="Repetir contraseña" required>
+          <div class="w-full">
+            <input name="txtnom" value="{{ usuario.nombres }}"
+              class="w-full text-center bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+              type="text" placeholder="Nombres" required>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-full">
+              <input name="txtapem" value="{{ usuario.materno }}"
+                class="w-full text-center bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                type="text" placeholder="Apellido Materno" required>
+            </div>
+            <div class="w-full">
+              <input name="txtapep" value="{{ usuario.paterno }}"
+                class="w-full text-center bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                type="text" placeholder="Apellido Paterno" required>
+            </div>
+          </div>
+          <div class="w-full">
+            <input name="txtema" disabled value="{{ usuario.correo }}"
+              class="w-full text-center bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+              type="email" placeholder="Correo">
+          </div>
+          <div class="w-full">
+            <input name="txtnac" value="{{ usuario.nacionalidad }}"
+              class="w-full text-center bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+              type="text" placeholder="Nacionalidad" required>
+          </div>
+          <div class="w-full relative">
+            <input value="{{ usuario.contraseña }}" name="txtpas"
+              class="w-full text-center bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow password-input"
+              type="password" placeholder="Contraseña" required>
+            <i
+              class="ri-eye-off-fill absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer toggle-password"></i>
+          </div>
+          <div class="w-full relative">
+            <input value="{{ usuario.contraseña }}" name="txtpas2"
+              class="w-full text-center bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow password-input"
+              type="password" placeholder="Repetir contraseña" required>
+            <i
+              class="ri-eye-off-fill absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer toggle-password"></i>
+          </div>
           <div class="flex gap-6">
             <button type="submit"
               class="flex-1 rounded-lg bg-[#1c253b] text-center text-[#fafafa] py-2 transition-colors hover:bg-[#24304C]">Guardar
@@ -64,4 +86,29 @@ ForoVox | Editar Perfil
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_scripts %}
+{% verbatim %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const togglePasswordIcons = document.querySelectorAll('.toggle-password');
+
+    togglePasswordIcons.forEach(icon => {
+      icon.addEventListener('click', () => {
+        const passwordInput = icon.previousElementSibling;
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.remove('ri-eye-off-fill');
+          icon.classList.add('ri-eye-fill');
+        } else {
+          passwordInput.type = 'password';
+          icon.classList.remove('ri-eye-fill');
+          icon.classList.add('ri-eye-off-fill');
+        }
+      });
+    });
+  });
+</script>
+{% endverbatim %}
 {% endblock %}
