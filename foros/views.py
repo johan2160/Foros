@@ -333,46 +333,56 @@ def mostrarCrearForo(request):
     tematicas = Tematica.objects.all()
     datos = {'tematicas': tematicas}
     return render(request, 'crear_foro.html', datos)
+
 def formCrearForo(request):
-    nom_foro = request.POST['txtnomfor']
-    des_foro = request.POST['txtdesfor']
-    tema_id = request.POST['cbotem']
-    
-    tematicas = Tematica.objects.all()
-    errores = {}
+    if request.method == 'POST':
+        nom_foro = request.POST['txtnomfor']
+        des_foro = request.POST['txtdesfor']
+        tema_id = request.POST['cbotem']
+        imagen = request.FILES.get('imagen')  # Obtener el archivo de imagen si se sube uno
 
-    if verificarSiExiste(Foro, 'nombre', nom_foro):
-        errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+        tematicas = Tematica.objects.all()
+        errores = {}
 
-    if errores:
-        datos = {'errores': errores, 'tematicas': tematicas}
+        if verificarSiExiste(Foro, 'nombre', nom_foro):
+            errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+
+        if errores:
+            datos = {'errores': errores, 'tematicas': tematicas}
+            return render(request, 'crear_foro.html', datos)
+
+        try:
+            tematica = Tematica.objects.get(id=tema_id)
+            foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica=tematica)
+
+            if imagen:
+                foro.imagen = imagen  # Guardar la imagen si se sube una
+
+            foro.save()
+
+            accion = "Creación de foro"
+            fecha = datetime.now()
+            usuario_hist = request.session["idUsuario"]  # ID del usuario que crea el foro
+            his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
+            his.save()
+
+            return redirect('administrar_foros')  # Redirigir a la administración de foros tras la creación exitosa
+
+        except Exception as e:
+            errores['db_error'] = f'Error al crear el foro: {str(e)}'
+            datos = {'errores': errores, 'tematicas': tematicas}
+            return render(request, 'crear_foro.html', datos)
+    else:
+        tematicas = Tematica.objects.all()
+        datos = {'tematicas': tematicas}
         return render(request, 'crear_foro.html', datos)
-    
-    try:
-        tematica = Tematica.objects.get(id=tema_id)
-        foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica=tematica)
-        foro.save()
-        
-        accion = "Creación de foro"
-        fecha = datetime.now()
-        usuario_hist = request.session["idUsuario"]  # ID del usuario que crea el foro
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
-        his.save()
 
-        return redirect('administrar_foros')  # Redirigir a la administración de foros tras la creación exitosa
-    
-    except Exception as e:
-        errores['db_error'] = f'Error al crear el foro: {str(e)}'
-        datos = {'errores': errores, 'tematicas': tematicas}
-        return render(request, 'crear_foro.html', datos)
 
 def mostrarEditarForo(request, id):
     foro = Foro.objects.get(id = id)
     tematicas = Tematica.objects.all()
     datos = {'foro': foro, 'tematicas': tematicas}
     return render(request, 'editar_foro.html', datos)
-
-# views.py
 
 def formEditarForo(request, id):
     if request.method == 'POST':
