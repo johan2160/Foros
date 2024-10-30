@@ -13,7 +13,7 @@ class Usuario(models.Model):
         ('Deshabilitado', 'Deshabilitado'),
     )
 
-    rut = models.TextField(max_length=12, unique=True)
+    rut = models.CharField(max_length=12, unique=True)
     nombres = models.TextField(max_length=100)
     paterno = models.TextField(max_length=50)
     materno = models.TextField(max_length=50, null=True, blank=True)
