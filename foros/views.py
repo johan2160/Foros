@@ -252,6 +252,7 @@ def formCrearTematica(request):
         errores['db_error'] = f'Error al crear la tematica: {str(e)}'
         return render(request, 'crear_tematica.html', {'errores': errores})
 
+
 def mostrarEditarTematica(request, id):
     tematica = Tematica.objects.get(id=id)
     datos = {'tematica': tematica}
@@ -289,6 +290,7 @@ def formEditarTematica(request, id):
         errores['db_error'] = f'Error al editar la tematica: {str(e)}'
         tematica = Tematica.objects.get(id=id)
         return render(request, 'editar_tematica.html', {'errores': errores, 'tematica': tematica})
+
 
 def eliminarTematica(request, id):
     try:
@@ -329,10 +331,12 @@ def mostrarForo(request, foro_id):
     datos = {'foro': foro, 'publicaciones': publicaciones}
     return render(request, 'ver_foro.html', datos)
 
+
 def mostrarCrearForo(request):
     tematicas = Tematica.objects.all()
     datos = {'tematicas': tematicas}
     return render(request, 'crear_foro.html', datos)
+
 
 def formCrearForo(request):
     if request.method == 'POST':
@@ -383,6 +387,7 @@ def mostrarEditarForo(request, id):
     tematicas = Tematica.objects.all()
     datos = {'foro': foro, 'tematicas': tematicas}
     return render(request, 'editar_foro.html', datos)
+
 
 def formEditarForo(request, id):
     if request.method == 'POST':
@@ -437,11 +442,11 @@ def formEditarForo(request, id):
         return redirect('editar_foro', id=id)
 
 
-
 def mostrarAdministrarForos(request):
     foros = Foro.objects.all()  
     datos = {'foros': foros}
     return render(request, 'administrar_foros.html', datos)
+
 
 def eliminarForo(request, id):
     try:
@@ -475,11 +480,12 @@ def eliminarForo(request, id):
     return render(request, 'administrar_foros.html', datos)
 
 
-# ---------- Comentarios ----------
+# ---------- Publicacion ----------
 def mostrarCrearPublicacion(request, foro_id):
     foro = Foro.objects.get(id = foro_id)
     datos = {'foro': foro}
     return render(request, 'crear_publicacion.html', datos)
+
 
 def formCrearPublicacion(request, foro_id):
     titulo = request.POST['txtpubtit']
@@ -507,12 +513,12 @@ def formCrearPublicacion(request, foro_id):
         return render(request, 'crear_publicacion.html', {'errores': errores, 'foro': foro})
 
 
-
 def mostrarEditarPublicacion(request, foro_id, publicacion_id):
     foro = Foro.objects.get(id = foro_id)
     publicacion = Publicacion.objects.get(id = publicacion_id)
     datos = {'foro': foro, 'publicacion': publicacion}
     return render(request, 'editar_publicacion.html', datos)
+
 
 def formEditarPublicacion(request, foro_id, publicacion_id):
     foro = Foro.objects.get(id=foro_id)
@@ -546,6 +552,32 @@ def formEditarPublicacion(request, foro_id, publicacion_id):
         'publicacion': publicacion,
     }
     return render(request, 'editar_publicacion.html', datos)  
+
+
+def mostrarPublicacion(request, foro_id, publicacion_id):
+    foro = Foro.objects.get(id = foro_id)
+    publicacion = Publicacion.objects.get(foro=foro, id=publicacion_id)
+    datos = {'foro': foro, 'publicacion': publicacion}
+    return render(request, 'publicacion.html', datos)
+
+
+def eliminarPublicacion(request, foro_id, publicacion_id):
+    try:
+        publicacion = Publicacion.objects.get(id=publicacion_id, foro_id=foro_id)
+        
+        accion = "Eliminación publicación"
+        fecha = datetime.now()
+        usuario = request.session.get("idUsuario")
+        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
+        his.save()
+
+        publicacion.delete()
+
+    except Publicacion.DoesNotExist:
+        messages.error(request, 'La publicación que intentas eliminar no existe.')
+
+    return redirect('foro', foro_id=foro_id) 
+
 
 
 # ---------- Historial ----------
