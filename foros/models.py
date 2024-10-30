@@ -1,13 +1,12 @@
 from django.db import models
 from django.utils import timezone
 
-# Create your models here.
 class Usuario(models.Model):
     TIPO_USUARIO = (
         ('Admin', 'Administrador'),
         ('Normal', 'Usuario Normal'),
     )
-    
+
     ESTADO_CUENTA = (
         ('Activo', 'Activo'),
         ('Suspendido', 'Suspendido'),
@@ -26,9 +25,15 @@ class Usuario(models.Model):
     intentos_fallidos = models.IntegerField(default=0)
     fecha_creacion = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"{self.nombres} {self.paterno} ({self.tipo_usuario}) - {self.estado}"
+
 class Tematica(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
     descripcion = models.TextField(max_length=400)
+
+    def __str__(self):
+        return self.nombre
 
 class Foro(models.Model):
     nombre = models.TextField(max_length=30, unique=True)
@@ -37,6 +42,9 @@ class Foro(models.Model):
     tematica = models.ForeignKey(Tematica, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"{self.nombre} - {self.tematica.nombre}"
+
 class Publicacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     foro = models.ForeignKey(Foro, on_delete=models.CASCADE)
@@ -44,10 +52,19 @@ class Publicacion(models.Model):
     texto = models.TextField(max_length=5000)
     fecha = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"Publicación de {self.usuario.nombres} en {self.foro.nombre} - {self.titulo}"
+
 class Historial(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     accion = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"{self.usuario.nombres} - {self.accion} ({self.fecha.strftime('%Y-%m-%d %H:%M:%S')})"
+
 class Palabrotas(models.Model):
     palabra = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.palabra
