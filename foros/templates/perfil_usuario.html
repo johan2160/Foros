@@ -41,13 +41,6 @@ ForoVox | Perfil usuario
           <h3 class="text-left font-semibold">Email</h3>
           <p clas>{{ usuario.correo }}</p>
         </div>
-        <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors relative">
-          <div class="flex gap-2.5">
-            <h3 class="text-left font-semibold">Contraseña</h3>
-            <i class="ri-eye-off-fill cursor-pointer toggle-password"></i>
-          </div>
-          <p class="password-text" data-password="{{ usuario.contraseña }}">****</p>
-        </div>
         <div class="flex justify-between p-2 rounded-md hover:bg-[#F1F3F8] transition-colors">
           <h3 class="text-left font-semibold">Nacionalidad</h3>
           <p clas>{{ usuario.nacionalidad }}</p>
@@ -71,31 +64,4 @@ ForoVox | Perfil usuario
   </div>
 </div>
 
-{% endblock %}
-
-{% block extra_scripts %}
-{% verbatim %}
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const togglePasswordIcons = document.querySelectorAll('.toggle-password');
-
-    togglePasswordIcons.forEach(icon => {
-      icon.addEventListener('click', () => {
-        const passwordText = icon.parentElement.nextElementSibling;
-        const actualPassword = passwordText.getAttribute('data-password');
-
-        if (passwordText.textContent.includes('****')) {
-          passwordText.textContent = actualPassword;
-          icon.classList.remove('ri-eye-off-fill');
-          icon.classList.add('ri-eye-fill');
-        } else {
-          passwordText.textContent = '****';
-          icon.classList.remove('ri-eye-fill');
-          icon.classList.add('ri-eye-off-fill');
-        }
-      });
-    });
-  });
-</script>
-{% endverbatim %}
 {% endblock %}
