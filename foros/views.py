@@ -1,10 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from functools import wraps
-from django.contrib import messages
 from datetime import datetime
 from .models import Usuario, Tematica, Foro, Publicacion, Historial, Palabrotas
 
-
+# Decoradores
 def login_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -19,67 +18,58 @@ def admin_required(view_func):
         if not request.session.get('estadoSesion'):
             return redirect('login')
         if request.session.get('tipUsuario') != 'Admin':
-            # Opcionalmente, puedes redirigir a una página de acceso denegado o mostrar un mensaje
             return redirect('acceso_denegado')
         return view_func(request, *args, **kwargs)
     return wrapper
 
+# Utilidades
+def get_session_data(request):
+    return {
+        'idUsuario': request.session.get("idUsuario"),
+        'nomUsuario': request.session.get("nomUsuario"),
+        'tipUsuario': request.session.get("tipUsuario"),
+    }
 
-# ---------- Index ----------
+def registrar_historial(accion, usuario_id):
+    Historial.objects.create(accion=accion, fecha=datetime.now(), usuario_id=usuario_id)
+
+def verificar_si_existe(clase, campo, valor):
+    return clase.objects.filter(**{campo: valor}).exists()
+
+def obtener_usuario(request):
+    usuario_id = request.session.get("idUsuario")
+    return get_object_or_404(Usuario, id=usuario_id)
+
+# Views
+@login_required
 def mostrarIndex(request):
-    estadoSesion = request.session.get("estadoSesion")
+    return render(request, 'index.html', get_session_data(request))
 
-    if estadoSesion:
-        idUsuario = request.session.get("idUsuario")
-        nomUsuario = request.session.get("nomUsuario")
-        tipUsuario = request.session.get("tipUsuario")
-        
-        datos = {
-            'idUsuario': idUsuario,
-            'nomUsuario': nomUsuario,
-            'tipUsuario': tipUsuario,
-        }
-
-        return render(request, 'index.html', datos)
-    else:
-        return redirect('login')
-
-
-# ---------- Login ----------
 def mostrarLogin(request):
     return render(request, 'login.html')
 
-
 def formLogin(request):
-    rut = request.POST["txtrut"]
-    pas = request.POST["txtpas"]
+    rut = request.POST.get("txtrut")
+    pas = request.POST.get("txtpas")
 
     try:
         usuario = Usuario.objects.get(rut=rut)
     except Usuario.DoesNotExist:
-        datos = {'mensaje_error': 'Usuario no encontrado.'}
-        return render(request, 'login.html', datos)
+        return render(request, 'login.html', {'mensaje_error': 'Usuario no encontrado.'})
 
     if usuario.estado == 'Suspendido':
-        datos = {'mensaje_error': 'Su cuenta está suspendida. Contacte al administrador.'}
-        return render(request, 'login.html', datos)
+        return render(request, 'login.html', {'mensaje_error': 'Su cuenta está suspendida. Contacte al administrador.'})
 
     if usuario.contraseña == pas:
-        # Restablecer intentos fallidos
         usuario.intentos_fallidos = 0
         usuario.save()
 
-        # Iniciar sesión
         request.session["estadoSesion"] = True
         request.session["idUsuario"] = usuario.id
         request.session["nomUsuario"] = usuario.nombres  
         request.session["tipUsuario"] = usuario.tipo_usuario
-        
-        # Registrar en historial
-        accion = "Inicia sesión"
-        fecha = datetime.now()
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario.id)
-        his.save()
+
+        registrar_historial("Inicia sesión", usuario.id)
 
         return redirect('index')
     else:
@@ -89,46 +79,42 @@ def formLogin(request):
         if usuario.intentos_fallidos >= 3:
             usuario.estado = 'Suspendido'
             usuario.save()
-            datos = {'mensaje_error': 'Su cuenta ha sido suspendida por múltiples intentos fallidos.'}
+            mensaje_error = 'Su cuenta ha sido suspendida por múltiples intentos fallidos.'
         else:
             intentos_restantes = 3 - usuario.intentos_fallidos
-            datos = {'mensaje_error': f'Contraseña incorrecta. Intentos restantes: {intentos_restantes}'}
-        
-        return render(request, 'login.html', datos)
+            mensaje_error = f'Contraseña incorrecta. Intentos restantes: {intentos_restantes}'
 
+        return render(request, 'login.html', {'mensaje_error': mensaje_error})
 
-
-# ---------- Signup ----------
 def mostrarSignup(request):
     return render(request, 'signup.html')
 
-
 def formSignup(request):
-    rut_usu = request.POST['txtrut']
-    nom_usu = request.POST['txtnom']
-    apem_usu = request.POST['txtapem']
-    apep_usu = request.POST['txtapep']
-    ema_usu = request.POST['txtema']
-    nac_usu = request.POST['txtnac']
-    pas_usu = request.POST['txtpas']
-    pas2_usu = request.POST['txtpas2']
+    rut_usu = request.POST.get('txtrut')
+    nom_usu = request.POST.get('txtnom')
+    apem_usu = request.POST.get('txtapem')
+    apep_usu = request.POST.get('txtapep')
+    ema_usu = request.POST.get('txtema')
+    nac_usu = request.POST.get('txtnac')
+    pas_usu = request.POST.get('txtpas')
+    pas2_usu = request.POST.get('txtpas2')
     
     errores = {}
 
     if pas_usu != pas2_usu:
         errores['contraseña'] = 'Las contraseñas no coinciden.'
         
-    if verificarSiExiste(Usuario, 'rut', rut_usu):
+    if verificar_si_existe(Usuario, 'rut', rut_usu):
         errores['rut'] = f'El rut: {rut_usu} ya existe.'
     
-    if verificarSiExiste(Usuario, 'correo', ema_usu):
+    if verificar_si_existe(Usuario, 'correo', ema_usu):
         errores['correo'] = f'El correo: {ema_usu} ya existe.'
         
     if errores:
         return render(request, 'signup.html', {'errores': errores})
 
     try:
-        usuario = Usuario(
+        usuario = Usuario.objects.create(
             rut=rut_usu,
             nombres=nom_usu,
             paterno=apem_usu,
@@ -137,86 +123,62 @@ def formSignup(request):
             nacionalidad=nac_usu,
             contraseña=pas_usu
         )
-        usuario.save()
         
-        accion = "Registro de usuario"
-        fecha = datetime.now()
-        usuario_hist = usuario.id  
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
-        his.save()  
+        registrar_historial("Registro de usuario", usuario.id)
 
-        request.session['mensaje_exito'] = 'Usuario registrado correctamente!'
-        return redirect('login')  # Redirige a login tras registro exitoso
+        return redirect('login')
         
     except Exception as e:
         errores['db_error'] = f'Error al crear el usuario: {str(e)}'
         return render(request, 'signup.html', {'errores': errores})
 
-
-# ---------- Logout ----------
 def logout(request):
-    accion = "Cierre sesión"
-    fecha = datetime.now()
-    usuario = request.session["idUsuario"]
-    his = Historial(accion = accion, fecha = fecha, usuario_id = usuario)
-    his.save()
-    
-    request.session.flush()  # Elimina toda la sesión
-    
-    response = redirect('login')    
-    return response
+    registrar_historial("Cierre sesión", request.session.get("idUsuario"))
+    request.session.flush()
+    return redirect('login')
 
-
-# ---------- Perfil Usuario ----------
 @login_required
 def mostrarPerfilUsuario(request, id):
-    usuario = Usuario.objects.get(id=id)
-    
-    estadoSesion = request.session.get("estadoSesion")
-    if estadoSesion:
-        idUsuario = request.session.get("idUsuario")
-        nomUsuario = request.session.get("nomUsuario")
-        tipUsuario = request.session.get("tipUsuario")
-        
-        datos = {
-            'usuario': usuario,
-            'idUsuario': idUsuario,
-            'nomUsuario': nomUsuario,
-            'tipUsuario': tipUsuario,
-        }
-        return render(request, 'perfil_usuario.html', datos)
-    else:
-        return redirect('login')
+    usuario = get_object_or_404(Usuario, id=id)
+    datos = {'usuario': usuario}
+    datos.update(get_session_data(request))
+    return render(request, 'perfil_usuario.html', datos)
 
 @login_required
 def mostrarEditarPerfilUsuario(request, id):
-    usuario = Usuario.objects.get(id = id)
-
+    usuario = get_object_or_404(Usuario, id=id)
     idUsuario = request.session.get("idUsuario")
-    nomUsuario = request.session.get("nomUsuario")
     tipUsuario = request.session.get("tipUsuario")
-    
-    datos = {'usuario': usuario, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
+
+    if tipUsuario != 'Admin' and idUsuario != usuario.id:
+        return redirect('acceso_denegado')
+
+    datos = {'usuario': usuario}
+    datos.update(get_session_data(request))
     return render(request, 'editar_perfil_usuario.html', datos)
 
 @login_required
 def formEditarPerfilUsuario(request, id):
-    nom_usu = request.POST['txtnom']
-    apem_usu = request.POST['txtapem']
-    apep_usu = request.POST['txtapep']
-    nac_usu = request.POST['txtnac']
-    pas_usu = request.POST['txtpas']
-    pas2_usu = request.POST['txtpas2']
+    usuario = get_object_or_404(Usuario, id=id)
+    idUsuario = request.session.get("idUsuario")
+    tipUsuario = request.session.get("tipUsuario")
 
-    usuario = Usuario.objects.get(id=id)
+    if tipUsuario != 'Admin' and idUsuario != usuario.id:
+        return redirect('acceso_denegado')
+
+    nom_usu = request.POST.get('txtnom')
+    apem_usu = request.POST.get('txtapem')
+    apep_usu = request.POST.get('txtapep')
+    nac_usu = request.POST.get('txtnac')
+    pas_usu = request.POST.get('txtpas')
+    pas2_usu = request.POST.get('txtpas2')
 
     errores = {}
 
     if pas_usu != pas2_usu:
         errores['contraseña'] = 'Las contraseñas no coinciden.'
-
-    if errores:
         datos = {'errores': errores, 'usuario': usuario}
+        datos.update(get_session_data(request))
         return render(request, 'editar_perfil_usuario.html', datos)
 
     try:
@@ -227,428 +189,302 @@ def formEditarPerfilUsuario(request, id):
         usuario.contraseña = pas_usu
         usuario.save()
         
-        accion = "Edición perfil"
-        fecha = datetime.now()
-        usuario_hist = request.session["idUsuario"]
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
-        his.save() 
+        registrar_historial("Edición perfil", idUsuario)
 
         return redirect('perfil_usuario', id=usuario.id)
     except Exception as e:
         errores['db_error'] = f'Error al actualizar el usuario: {str(e)}'
         datos = {'errores': errores, 'usuario': usuario}
+        datos.update(get_session_data(request))
         return render(request, 'editar_perfil_usuario.html', datos)
-    
+        
 @admin_required
 def mostrarGestionarUsuarios(request):
     usuarios = Usuario.objects.all()
     datos = {'usuarios': usuarios}
+    datos.update(get_session_data(request))
     return render(request, 'gestionar_usuarios.html', datos)
 
-
-# ---------- Temáticas ----------
 @admin_required
 def mostrarCrearTematica(request):
     return render(request, 'crear_tematica.html')
 
 @admin_required
 def formCrearTematica(request):
-    nom_tematica = request.POST['txtnomtem']
-    des_tematica = request.POST['txtdestem']
+    nom_tematica = request.POST.get('txtnomtem')
+    des_tematica = request.POST.get('txtdestem')
     
     errores = {}
 
-    if verificarSiExiste(Tematica, 'nombre', nom_tematica):
-        errores['nombre'] = f'La tematica: {nom_tematica} ya existe.'
+    if verificar_si_existe(Tematica, 'nombre', nom_tematica):
+        errores['nombre'] = f'La temática: {nom_tematica} ya existe.'
 
     if errores:
         return render(request, 'crear_tematica.html', {'errores': errores})
     
     try:
-        tematica = Tematica(nombre=nom_tematica, descripcion=des_tematica)
-        tematica.save()
+        tematica = Tematica.objects.create(nombre=nom_tematica, descripcion=des_tematica)
         
-        accion = "Creación de temática"
-        fecha = datetime.now()
-        usuario_hist = request.session["idUsuario"]
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
-        his.save() 
+        registrar_historial("Creación de temática", request.session.get("idUsuario"))
 
         return redirect('administrar_tematicas')
     
     except Exception as e:
-        errores['db_error'] = f'Error al crear la tematica: {str(e)}'
+        errores['db_error'] = f'Error al crear la temática: {str(e)}'
         return render(request, 'crear_tematica.html', {'errores': errores})
 
 @admin_required
 def mostrarEditarTematica(request, id):
-    tematica = Tematica.objects.get(id=id)
-    datos = {'tematica': tematica}
-    return render(request, 'editar_tematica.html', datos)
+    tematica = get_object_or_404(Tematica, id=id)
+    return render(request, 'editar_tematica.html', {'tematica': tematica})
 
 @admin_required
 def formEditarTematica(request, id):
-    nom_tematica = request.POST['txtnomtem']
-    des_tematica = request.POST['txtdestem']
+    nom_tematica = request.POST.get('txtnomtem')
+    des_tematica = request.POST.get('txtdestem')
     
     errores = {}
 
-    if verificarSiExiste(Tematica, 'nombre', nom_tematica):
-        errores['nombre'] = f'La tematica: {nom_tematica} ya existe.'
-        
+    if Tematica.objects.filter(nombre=nom_tematica).exclude(id=id).exists():
+        errores['nombre'] = f'La temática: {nom_tematica} ya existe.'
+
+    tematica = get_object_or_404(Tematica, id=id)
+
     if errores:
-        tematica = Tematica.objects.get(id=id)
         return render(request, 'editar_tematica.html', {'errores': errores, 'tematica': tematica})
     
     try:
-        tematica = Tematica.objects.get(id=id)
         tematica.nombre = nom_tematica
         tematica.descripcion = des_tematica
         tematica.save()
         
-        accion = "Edición de temática"
-        fecha = datetime.now()
-        usuario_hist = request.session["idUsuario"]
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
-        his.save() 
+        registrar_historial("Edición de temática", request.session.get("idUsuario"))
 
-        return redirect('administrar_tematicas')  # Redirige a la administración de temáticas tras editar exitosamente
+        return redirect('administrar_tematicas')
     
     except Exception as e:
-        errores['db_error'] = f'Error al editar la tematica: {str(e)}'
-        tematica = Tematica.objects.get(id=id)
+        errores['db_error'] = f'Error al editar la temática: {str(e)}'
         return render(request, 'editar_tematica.html', {'errores': errores, 'tematica': tematica})
 
 @admin_required
 def eliminarTematica(request, id):
+    tematica = get_object_or_404(Tematica, id=id)
     try:
-        tematica = Tematica.objects.get(id=id)
-        
-        accion = "Eliminación tematica"
-        fecha = datetime.now()
-        usuario = request.session["idUsuario"]
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
-        his.save()
-
         tematica.delete()
-
+        registrar_historial("Eliminación temática", request.session.get("idUsuario"))
+    except Exception as e:
+        errores = {'db_error': f'Error al eliminar la temática: {str(e)}'}
         tematicas = Tematica.objects.all()
-
-        datos = {
-            'mensaje_exito': 'Tematica eliminada correctamente!',
-            'tematicas': tematicas
-        }
-    except:
-        datos = {
-            'mensaje_error': 'La temática que intentas eliminar no existe.',
-            'tematicas': Tematica.objects.all() 
-        }
-    return render(request, 'administrar_tematicas.html', datos)
+        datos = {'errores': errores, 'tematicas': tematicas}
+        datos.update(get_session_data(request))
+        return render(request, 'administrar_tematicas.html', datos)
+    return redirect('administrar_tematicas')
 
 @admin_required
 def mostrarAdministrarTematicas(request):
     tematicas = Tematica.objects.all()
     datos = {'tematicas': tematicas}
+    datos.update(get_session_data(request))
     return render(request, 'administrar_tematicas.html', datos)
 
-
-# ---------- Foro ----------
 @login_required
 def mostrarForo(request, foro_id):
-    foro = Foro.objects.get(id = foro_id)
-    publicaciones = Publicacion.objects.filter(foro = foro)
-    
-    idUsuario = request.session.get("idUsuario")
-    nomUsuario = request.session.get("nomUsuario")
-    tipUsuario = request.session.get("tipUsuario")
-    
-    datos = {'foro': foro, 'publicaciones': publicaciones, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
+    foro = get_object_or_404(Foro, id=foro_id)
+    publicaciones = Publicacion.objects.filter(foro=foro)
+    datos = {'foro': foro, 'publicaciones': publicaciones}
+    datos.update(get_session_data(request))
     return render(request, 'ver_foro.html', datos)
-
 
 @admin_required
 def mostrarCrearForo(request):
     tematicas = Tematica.objects.all()
-    datos = {'tematicas': tematicas}
-    return render(request, 'crear_foro.html', datos)
+    return render(request, 'crear_foro.html', {'tematicas': tematicas})
 
 @admin_required
 def formCrearForo(request):
-    if request.method == 'POST':
-        nom_foro = request.POST['txtnomfor']
-        des_foro = request.POST['txtdesfor']
-        tema_id = request.POST['cbotem']
-        imagen = request.FILES.get('imagen')  # Obtener el archivo de imagen si se sube uno
+    nom_foro = request.POST.get('txtnomfor')
+    des_foro = request.POST.get('txtdesfor')
+    tema_id = request.POST.get('cbotem')
+    imagen = request.FILES.get('imagen')
+    
+    errores = {}
 
+    if verificar_si_existe(Foro, 'nombre', nom_foro):
+        errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+
+    if errores:
         tematicas = Tematica.objects.all()
-        errores = {}
+        return render(request, 'crear_foro.html', {'errores': errores, 'tematicas': tematicas})
 
-        if verificarSiExiste(Foro, 'nombre', nom_foro):
-            errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+    try:
+        tematica = get_object_or_404(Tematica, id=tema_id)
+        foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica=tematica)
+        if imagen:
+            foro.imagen = imagen
+        foro.save()
+        
+        registrar_historial("Creación de foro", request.session.get("idUsuario"))
 
-        if errores:
-            datos = {'errores': errores, 'tematicas': tematicas}
-            return render(request, 'crear_foro.html', datos)
-
-        try:
-            tematica = Tematica.objects.get(id=tema_id)
-            foro = Foro(nombre=nom_foro, descripcion=des_foro, tematica=tematica)
-
-            if imagen:
-                foro.imagen = imagen  # Guardar la imagen si se sube una
-
-            foro.save()
-
-            accion = "Creación de foro"
-            fecha = datetime.now()
-            usuario_hist = request.session["idUsuario"]  # ID del usuario que crea el foro
-            his = Historial(accion=accion, fecha=fecha, usuario_id=usuario_hist)
-            his.save()
-
-            return redirect('administrar_foros')  # Redirigir a la administración de foros tras la creación exitosa
-
-        except Exception as e:
-            errores['db_error'] = f'Error al crear el foro: {str(e)}'
-            datos = {'errores': errores, 'tematicas': tematicas}
-            return render(request, 'crear_foro.html', datos)
-    else:
+        return redirect('administrar_foros')
+    
+    except Exception as e:
+        errores['db_error'] = f'Error al crear el foro: {str(e)}'
         tematicas = Tematica.objects.all()
-        datos = {'tematicas': tematicas}
-        return render(request, 'crear_foro.html', datos)
+        return render(request, 'crear_foro.html', {'errores': errores, 'tematicas': tematicas})
 
 @admin_required
 def mostrarEditarForo(request, id):
-    foro = Foro.objects.get(id = id)
+    foro = get_object_or_404(Foro, id=id)
     tematicas = Tematica.objects.all()
-    datos = {'foro': foro, 'tematicas': tematicas}
-    return render(request, 'editar_foro.html', datos)
+    return render(request, 'editar_foro.html', {'foro': foro, 'tematicas': tematicas})
 
 @admin_required
 def formEditarForo(request, id):
-    if request.method == 'POST':
-        nom_foro = request.POST['txtnomfor']
-        des_foro = request.POST['txtdesfor']
-        tema_id = request.POST['cbotem']
-        imagen = request.FILES.get('imagen')  # Obtener el archivo de imagen si se subió uno
+    nom_foro = request.POST.get('txtnomfor')
+    des_foro = request.POST.get('txtdesfor')
+    tema_id = request.POST.get('cbotem')
+    imagen = request.FILES.get('imagen')
 
-        errores = {}
+    errores = {}
 
-        # Verificar si el nombre del foro ya existe en otro foro (excluyendo el actual)
-        if Foro.objects.filter(nombre=nom_foro).exclude(id=id).exists():
-            errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+    if Foro.objects.filter(nombre=nom_foro).exclude(id=id).exists():
+        errores['nombre'] = f'El foro: {nom_foro} ya existe, intente con otro nombre.'
+
+    foro = get_object_or_404(Foro, id=id)
+    tematica = get_object_or_404(Tematica, id=tema_id)
+
+    if errores:
+        tematicas = Tematica.objects.all()
+        return render(request, 'editar_foro.html', {'errores': errores, 'foro': foro, 'tematicas': tematicas})
+
+    try:
+        foro.nombre = nom_foro
+        foro.descripcion = des_foro
+        foro.tematica = tematica
+        if imagen:
+            foro.imagen = imagen
+        foro.save()
         
-        if errores:
-            foro = Foro.objects.get(id=id)
-            tematicas = Tematica.objects.all()
-            datos = {'foro': foro, 'tematicas': tematicas, 'errores': errores}
-            return render(request, 'editar_foro.html', datos)
-        
-        try:
-            foro = Foro.objects.get(id=id)
-            foro.nombre = nom_foro
-            foro.descripcion = des_foro
+        registrar_historial("Edición foro", request.session.get("idUsuario"))
 
-            # Obtener la instancia de la temática seleccionada
-            tematica = Tematica.objects.get(id=tema_id)
-            foro.tematica = tematica
-
-            if imagen:
-                foro.imagen = imagen  # Actualizar la imagen si se subió una nueva
-
-            foro.save()
-            
-            accion = "Edición foro"
-            fecha = datetime.now()
-            usuario = request.session["idUsuario"]
-            his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
-            his.save()
-            
-            # Redirigir al usuario a la página de administración de foros con un mensaje de éxito
-            messages.success(request, 'Foro actualizado correctamente!')
-            return redirect('administrar_foros')
-        
-        except Exception as e:
-            errores['db_error'] = f'Error al editar el foro: {str(e)}'
-            foro = Foro.objects.get(id=id)
-            tematicas = Tematica.objects.all()
-            datos = {'errores': errores, 'foro': foro, 'tematicas': tematicas}
-            return render(request, 'editar_foro.html', datos)
-    else:
-        return redirect('editar_foro', id=id)
-
+        return redirect('administrar_foros')
+    
+    except Exception as e:
+        errores['db_error'] = f'Error al editar el foro: {str(e)}'
+        tematicas = Tematica.objects.all()
+        return render(request, 'editar_foro.html', {'errores': errores, 'foro': foro, 'tematicas': tematicas})
 
 @admin_required
 def mostrarAdministrarForos(request):
-    foros = Foro.objects.all()  
+    foros = Foro.objects.all()
     datos = {'foros': foros}
+    datos.update(get_session_data(request))
     return render(request, 'administrar_foros.html', datos)
-
 
 @admin_required
 def eliminarForo(request, id):
+    foro = get_object_or_404(Foro, id=id)
     try:
-        foro = Foro.objects.get(id=id)
-        
-        # Guardar la acción en el historial
-        accion = "Eliminación foro"
-        fecha = datetime.now()
-        usuario = request.session["idUsuario"]
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
-        his.save()
-
-        # Eliminar el foro
         foro.delete()
-
-        # Obtener la lista de foros actualizada
+        registrar_historial("Eliminación foro", request.session.get("idUsuario"))
+    except Exception as e:
+        errores = {'db_error': f'Error al eliminar el foro: {str(e)}'}
         foros = Foro.objects.all()
+        datos = {'errores': errores, 'foros': foros}
+        datos.update(get_session_data(request))
+        return render(request, 'administrar_foros.html', datos)
+    return redirect('administrar_foros')
 
-        # Preparar los datos para la plantilla
-        datos = {
-            'mensaje_exito': 'Foro eliminado correctamente!',
-            'foros': foros 
-        }
-
-    except:
-        # En caso de que el foro no exista, mostramos un mensaje o redirigimos
-        datos = {
-            'mensaje_error': 'El foro que intentas eliminar no existe.',
-            'foros': Foro.objects.all()
-        }
-    return render(request, 'administrar_foros.html', datos)
-
-
-# ---------- Publicacion ----------
 @login_required
 def mostrarCrearPublicacion(request, foro_id):
-    foro = Foro.objects.get(id = foro_id)
-    
-    idUsuario = request.session.get("idUsuario")
-    nomUsuario = request.session.get("nomUsuario")
-    tipUsuario = request.session.get("tipUsuario")
-    
-    datos = {'foro': foro, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
+    foro = get_object_or_404(Foro, id=foro_id)
+    datos = {'foro': foro}
+    datos.update(get_session_data(request))
     return render(request, 'crear_publicacion.html', datos)
 
 @login_required
 def formCrearPublicacion(request, foro_id):
-    titulo = request.POST['txtpubtit']
-    comentario = request.POST['txtpubcom']
-    
-    idUsuario = request.session.get("idUsuario")
-    usuario = Usuario.objects.get(id=idUsuario)
-    
-    foro = Foro.objects.get(id=foro_id)
-    
+    titulo = request.POST.get('txtpubtit')
+    comentario = request.POST.get('txtpubcom')
+
+    usuario = obtener_usuario(request)
+    foro = get_object_or_404(Foro, id=foro_id)
+
     try:
-        publicacion = Publicacion(usuario=usuario, foro=foro, titulo=titulo, texto=comentario)
-        publicacion.save()
+        Publicacion.objects.create(usuario=usuario, foro=foro, titulo=titulo, texto=comentario)
         
-        accion = "Creación publicación"
-        fecha = datetime.now()
-        usuario = request.session["idUsuario"]
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
-        his.save()
+        registrar_historial("Creación publicación", usuario.id)
 
         return redirect('foro', foro_id=foro.id)
         
     except Exception as e:
-        errores = {'db_error': f'Error al crear la publicacion: {str(e)}'}
-        return render(request, 'crear_publicacion.html', {'errores': errores, 'foro': foro})
-
+        errores = {'db_error': f'Error al crear la publicación: {str(e)}'}
+        datos = {'errores': errores, 'foro': foro}
+        datos.update(get_session_data(request))
+        return render(request, 'crear_publicacion.html', datos)
 
 @login_required
 def mostrarEditarPublicacion(request, foro_id, publicacion_id):
-    foro = Foro.objects.get(id = foro_id)
-    publicacion = Publicacion.objects.get(id = publicacion_id)
-    
-    idUsuario = request.session.get("idUsuario")
-    nomUsuario = request.session.get("nomUsuario")
-    tipUsuario = request.session.get("tipUsuario")
-    
-    datos = {'foro': foro, 'publicacion': publicacion, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
+    foro = get_object_or_404(Foro, id=foro_id)
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    datos = {'foro': foro, 'publicacion': publicacion}
+    datos.update(get_session_data(request))
     return render(request, 'editar_publicacion.html', datos)
-
 
 @login_required
 def formEditarPublicacion(request, foro_id, publicacion_id):
-    foro = Foro.objects.get(id=foro_id)
-    publicacion = Publicacion.objects.get(id=publicacion_id)
+    foro = get_object_or_404(Foro, id=foro_id)
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    titulo = request.POST.get('txtpubtit')
+    comentario = request.POST.get('txtpubcom')
+    
     errores = {}
 
-    if request.method == 'POST':
-        titulo = request.POST.get('txtpubtit')
-        comentario = request.POST.get('txtpubcom')
-        publicacion.titulo = titulo
-        publicacion.texto = comentario
+    publicacion.titulo = titulo
+    publicacion.texto = comentario
+    
+    try:
+        publicacion.save()
         
-        try:
-            publicacion.save()
-            
-            accion = "Edición de publicación"
-            fecha = datetime.now()
-            usuario = request.session["idUsuario"]  # Suponiendo que el idUsuario está en la sesión
-            his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
-            his.save()
-            
-            messages.success(request, 'La publicación ha sido actualizada exitosamente.')
-            # quiero mostrar un mensaje de exito (Como lo puedo lograr?)
-            return redirect('foro', foro_id=foro.id)
-        except Exception as e:
-            errores['db_error'] = f'Error al editar la publicación: {str(e)}'
+        registrar_historial("Edición de publicación", request.session.get("idUsuario"))
 
-    datos = {
-        'errores': errores,
-        'foro': foro,
-        'publicacion': publicacion,
-    }
-    return render(request, 'editar_publicacion.html', datos)  
+        return redirect('foro', foro_id=foro.id)
+    except Exception as e:
+        errores['db_error'] = f'Error al editar la publicación: {str(e)}'
 
+    datos = {'errores': errores, 'foro': foro, 'publicacion': publicacion}
+    datos.update(get_session_data(request))
+    return render(request, 'editar_publicacion.html', datos)
 
 @login_required
 def mostrarPublicacion(request, foro_id, publicacion_id):
-    foro = Foro.objects.get(id = foro_id)
-    publicacion = Publicacion.objects.get(foro=foro, id=publicacion_id)
-    
-    idUsuario = request.session.get("idUsuario")
-    nomUsuario = request.session.get("nomUsuario")
-    tipUsuario = request.session.get("tipUsuario")
-    
-    datos = {'foro': foro, 'publicacion': publicacion, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
+    foro = get_object_or_404(Foro, id=foro_id)
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    datos = {'foro': foro, 'publicacion': publicacion}
+    datos.update(get_session_data(request))
     return render(request, 'publicacion.html', datos)
-
 
 @login_required
 def eliminarPublicacion(request, foro_id, publicacion_id):
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id, foro_id=foro_id)
     try:
-        publicacion = Publicacion.objects.get(id=publicacion_id, foro_id=foro_id)
-        
-        accion = "Eliminación publicación"
-        fecha = datetime.now()
-        usuario = request.session.get("idUsuario")
-        his = Historial(accion=accion, fecha=fecha, usuario_id=usuario)
-        his.save()
-
         publicacion.delete()
+        registrar_historial("Eliminación publicación", request.session.get("idUsuario"))
+    except Exception as e:
+        errores = {'db_error': f'Error al eliminar la publicación: {str(e)}'}
+        foro = get_object_or_404(Foro, id=foro_id)
+        publicaciones = Publicacion.objects.filter(foro=foro)
+        datos = {'errores': errores, 'foro': foro, 'publicaciones': publicaciones}
+        datos.update(get_session_data(request))
+        return render(request, 'ver_foro.html', datos)
+    return redirect('foro', foro_id=foro_id)
 
-    except Publicacion.DoesNotExist:
-        messages.error(request, 'La publicación que intentas eliminar no existe.')
-
-    return redirect('foro', foro_id=foro_id) 
-
-
-# ---------- Historial ----------
 @admin_required
 def mostrarHistorialAcciones(request):
     historial = Historial.objects.all()
-    datos = { 'historial': historial }
+    datos = {'historial': historial}
+    datos.update(get_session_data(request))
     return render(request, 'historial_acciones.html', datos)
 
-
-# ---------- Acceso Denegado ----------
 def accesoDenegado(request):
-    return render(request, 'acceso_denegado.html')
-
-
-# ---------- Utilidades ----------
-def verificarSiExiste(clase, campo, valor):
-    return clase.objects.filter(**{campo: valor}).exists()
+    return render(request, 'acceso_denegado.html', {'mensaje': 'No tienes permiso para acceder a esta página.'})
