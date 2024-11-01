@@ -1,7 +1,28 @@
 from django.shortcuts import render, redirect
+from functools import wraps
 from django.contrib import messages
 from datetime import datetime
 from .models import Usuario, Tematica, Foro, Publicacion, Historial, Palabrotas
+
+
+def login_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('estadoSesion'):
+            return redirect('login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('estadoSesion'):
+            return redirect('login')
+        if request.session.get('tipUsuario') != 'Admin':
+            # Opcionalmente, puedes redirigir a una página de acceso denegado o mostrar un mensaje
+            return redirect('acceso_denegado')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 # ---------- Index ----------
@@ -147,6 +168,7 @@ def logout(request):
 
 
 # ---------- Perfil Usuario ----------
+@login_required
 def mostrarPerfilUsuario(request, id):
     usuario = Usuario.objects.get(id=id)
     
@@ -166,13 +188,18 @@ def mostrarPerfilUsuario(request, id):
     else:
         return redirect('login')
 
-
+@login_required
 def mostrarEditarPerfilUsuario(request, id):
     usuario = Usuario.objects.get(id = id)
-    datos = {'usuario': usuario}
+
+    idUsuario = request.session.get("idUsuario")
+    nomUsuario = request.session.get("nomUsuario")
+    tipUsuario = request.session.get("tipUsuario")
+    
+    datos = {'usuario': usuario, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
     return render(request, 'editar_perfil_usuario.html', datos)
 
-
+@login_required
 def formEditarPerfilUsuario(request, id):
     nom_usu = request.POST['txtnom']
     apem_usu = request.POST['txtapem']
@@ -212,7 +239,7 @@ def formEditarPerfilUsuario(request, id):
         datos = {'errores': errores, 'usuario': usuario}
         return render(request, 'editar_perfil_usuario.html', datos)
     
-
+@admin_required
 def mostrarGestionarUsuarios(request):
     usuarios = Usuario.objects.all()
     datos = {'usuarios': usuarios}
@@ -220,10 +247,11 @@ def mostrarGestionarUsuarios(request):
 
 
 # ---------- Temáticas ----------
+@admin_required
 def mostrarCrearTematica(request):
     return render(request, 'crear_tematica.html')
 
-
+@admin_required
 def formCrearTematica(request):
     nom_tematica = request.POST['txtnomtem']
     des_tematica = request.POST['txtdestem']
@@ -252,13 +280,13 @@ def formCrearTematica(request):
         errores['db_error'] = f'Error al crear la tematica: {str(e)}'
         return render(request, 'crear_tematica.html', {'errores': errores})
 
-
+@admin_required
 def mostrarEditarTematica(request, id):
     tematica = Tematica.objects.get(id=id)
     datos = {'tematica': tematica}
     return render(request, 'editar_tematica.html', datos)
 
-
+@admin_required
 def formEditarTematica(request, id):
     nom_tematica = request.POST['txtnomtem']
     des_tematica = request.POST['txtdestem']
@@ -291,7 +319,7 @@ def formEditarTematica(request, id):
         tematica = Tematica.objects.get(id=id)
         return render(request, 'editar_tematica.html', {'errores': errores, 'tematica': tematica})
 
-
+@admin_required
 def eliminarTematica(request, id):
     try:
         tematica = Tematica.objects.get(id=id)
@@ -317,7 +345,7 @@ def eliminarTematica(request, id):
         }
     return render(request, 'administrar_tematicas.html', datos)
 
-
+@admin_required
 def mostrarAdministrarTematicas(request):
     tematicas = Tematica.objects.all()
     datos = {'tematicas': tematicas}
@@ -325,19 +353,26 @@ def mostrarAdministrarTematicas(request):
 
 
 # ---------- Foro ----------
+@login_required
 def mostrarForo(request, foro_id):
     foro = Foro.objects.get(id = foro_id)
     publicaciones = Publicacion.objects.filter(foro = foro)
-    datos = {'foro': foro, 'publicaciones': publicaciones}
+    
+    idUsuario = request.session.get("idUsuario")
+    nomUsuario = request.session.get("nomUsuario")
+    tipUsuario = request.session.get("tipUsuario")
+    
+    datos = {'foro': foro, 'publicaciones': publicaciones, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
     return render(request, 'ver_foro.html', datos)
 
 
+@admin_required
 def mostrarCrearForo(request):
     tematicas = Tematica.objects.all()
     datos = {'tematicas': tematicas}
     return render(request, 'crear_foro.html', datos)
 
-
+@admin_required
 def formCrearForo(request):
     if request.method == 'POST':
         nom_foro = request.POST['txtnomfor']
@@ -381,14 +416,14 @@ def formCrearForo(request):
         datos = {'tematicas': tematicas}
         return render(request, 'crear_foro.html', datos)
 
-
+@admin_required
 def mostrarEditarForo(request, id):
     foro = Foro.objects.get(id = id)
     tematicas = Tematica.objects.all()
     datos = {'foro': foro, 'tematicas': tematicas}
     return render(request, 'editar_foro.html', datos)
 
-
+@admin_required
 def formEditarForo(request, id):
     if request.method == 'POST':
         nom_foro = request.POST['txtnomfor']
@@ -442,12 +477,14 @@ def formEditarForo(request, id):
         return redirect('editar_foro', id=id)
 
 
+@admin_required
 def mostrarAdministrarForos(request):
     foros = Foro.objects.all()  
     datos = {'foros': foros}
     return render(request, 'administrar_foros.html', datos)
 
 
+@admin_required
 def eliminarForo(request, id):
     try:
         foro = Foro.objects.get(id=id)
@@ -481,12 +518,18 @@ def eliminarForo(request, id):
 
 
 # ---------- Publicacion ----------
+@login_required
 def mostrarCrearPublicacion(request, foro_id):
     foro = Foro.objects.get(id = foro_id)
-    datos = {'foro': foro}
+    
+    idUsuario = request.session.get("idUsuario")
+    nomUsuario = request.session.get("nomUsuario")
+    tipUsuario = request.session.get("tipUsuario")
+    
+    datos = {'foro': foro, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
     return render(request, 'crear_publicacion.html', datos)
 
-
+@login_required
 def formCrearPublicacion(request, foro_id):
     titulo = request.POST['txtpubtit']
     comentario = request.POST['txtpubcom']
@@ -513,13 +556,20 @@ def formCrearPublicacion(request, foro_id):
         return render(request, 'crear_publicacion.html', {'errores': errores, 'foro': foro})
 
 
+@login_required
 def mostrarEditarPublicacion(request, foro_id, publicacion_id):
     foro = Foro.objects.get(id = foro_id)
     publicacion = Publicacion.objects.get(id = publicacion_id)
-    datos = {'foro': foro, 'publicacion': publicacion}
+    
+    idUsuario = request.session.get("idUsuario")
+    nomUsuario = request.session.get("nomUsuario")
+    tipUsuario = request.session.get("tipUsuario")
+    
+    datos = {'foro': foro, 'publicacion': publicacion, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
     return render(request, 'editar_publicacion.html', datos)
 
 
+@login_required
 def formEditarPublicacion(request, foro_id, publicacion_id):
     foro = Foro.objects.get(id=foro_id)
     publicacion = Publicacion.objects.get(id=publicacion_id)
@@ -554,13 +604,20 @@ def formEditarPublicacion(request, foro_id, publicacion_id):
     return render(request, 'editar_publicacion.html', datos)  
 
 
+@login_required
 def mostrarPublicacion(request, foro_id, publicacion_id):
     foro = Foro.objects.get(id = foro_id)
     publicacion = Publicacion.objects.get(foro=foro, id=publicacion_id)
-    datos = {'foro': foro, 'publicacion': publicacion}
+    
+    idUsuario = request.session.get("idUsuario")
+    nomUsuario = request.session.get("nomUsuario")
+    tipUsuario = request.session.get("tipUsuario")
+    
+    datos = {'foro': foro, 'publicacion': publicacion, 'tipUsuario': tipUsuario, 'idUsuario': idUsuario, 'nomUsuario': nomUsuario}
     return render(request, 'publicacion.html', datos)
 
 
+@login_required
 def eliminarPublicacion(request, foro_id, publicacion_id):
     try:
         publicacion = Publicacion.objects.get(id=publicacion_id, foro_id=foro_id)
@@ -579,12 +636,17 @@ def eliminarPublicacion(request, foro_id, publicacion_id):
     return redirect('foro', foro_id=foro_id) 
 
 
-
 # ---------- Historial ----------
+@admin_required
 def mostrarHistorialAcciones(request):
     historial = Historial.objects.all()
     datos = { 'historial': historial }
     return render(request, 'historial_acciones.html', datos)
+
+
+# ---------- Acceso Denegado ----------
+def accesoDenegado(request):
+    return render(request, 'acceso_denegado.html')
 
 
 # ---------- Utilidades ----------
