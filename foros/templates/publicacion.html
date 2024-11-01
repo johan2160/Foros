@@ -7,7 +7,15 @@ ForoVox | Ver Publicación
 
 {% block content %}
 
+{% if tipUsuario == "Admin" %}
+
 {% include 'components/admin-display.html' %}
+
+{% else %}
+
+{% include 'components/usuario-display.html' %}
+
+{% endif %}
 <div class="flex justify-center">
   <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
     {% if publicacion %}
