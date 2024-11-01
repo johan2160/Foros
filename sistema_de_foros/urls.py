@@ -48,6 +48,9 @@ urlpatterns = [
     
     # ---------- Manejo de Historial de Acciones ----------    
     path('historial_acciones/', views.mostrarHistorialAcciones, name='historial_acciones'),
+    
+    # ---------- Manejo de Acceso Denegado ----------    
+    path('acceso_denegado/', views.accesoDenegado, name='acceso_denegado'),
 ]
 
 if settings.DEBUG:
