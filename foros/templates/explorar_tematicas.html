@@ -1,0 +1,151 @@
+{% extends 'master.html' %}
+
+{% block title %}
+ForoVox | Explorar Temáticas
+{% endblock %}
+
+{% block content %}
+
+{% if tipUsuario == "Admin" %}
+    {% include 'components/admin-display.html' %}
+{% else %}
+    {% include 'components/usuario-display.html' %}
+{% endif %}
+
+<div class="flex justify-center">
+    <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
+        <h2 class="font-bold text-2xl mb-8">Explorar Temáticas</h2>
+
+        <div class="w-full flex justify-between items-center mb-3 mt-1">
+            <div>
+                <div class="w-full max-w-sm min-w-[200px] relative">
+                    <div class="relative">
+                        <input id="searchInput"
+                            class="bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
+                            placeholder="Buscar temática..." />
+                        <button class="absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded "
+                            type="button">
+                            <i class="ri-search-line text-slate-600 text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="relative flex flex-col w-full h-auto overflow-auto text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+            <table id="tematicaTable" class="w-full text-left table-auto min-w-max">
+                <thead>
+                    <tr>
+                        <th class="p-4 border-b border-slate-200 bg-slate-50">
+                            <p class="text-sm font-normal leading-none text-slate-500">Temática</p>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="tematicaTableBody">
+                    {% for tematica in tematicas %}
+                    <tr class="hover:bg-slate-50 border-b border-slate-200">
+                        <td class="p-4 py-5">
+                            <a href="{% url 'explorar_foros' %}?tematica={{ tematica.id }}" class="block font-semibold text-sm text-slate-800 hover:underline">{{ tematica.nombre }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="flex justify-between items-center px-4 py-3">
+                <div class="text-sm text-slate-500" id="tableInfo">
+                    Mostrando <b>1-5</b> de {{ tematicas|length }}
+                </div>
+                <div class="flex space-x-1">
+                    <button id="prevBtn"
+                        class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+                        Prev
+                    </button>
+                    <button id="nextBtn"
+                        class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts para búsqueda y paginación -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const tematicaTableBody = document.getElementById('tematicaTableBody');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const tableInfo = document.getElementById('tableInfo');
+
+    let currentPage = 1;
+    const rowsPerPage = 5;
+
+    function filterTable() {
+      const filter = searchInput.value.toLowerCase();
+      const rows = tematicaTableBody.getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let match = false;
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j].innerText.toLowerCase().includes(filter)) {
+            match = true;
+            break;
+          }
+        }
+        rows[i].setAttribute('data-visible', match ? 'true' : 'false');
+      }
+    }
+
+    function updateTable() {
+      const rows = tematicaTableBody.getElementsByTagName('tr');
+      let totalRows = 0;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i].getAttribute('data-visible') === 'true') {
+          totalRows++;
+        }
+      }
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      let visibleRows = 0;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i].getAttribute('data-visible') === 'true') {
+          rows[i].style.display = (visibleRows >= start && visibleRows < end) ? '' : 'none';
+          visibleRows++;
+        } else {
+          rows[i].style.display = 'none';
+        }
+      }
+      tableInfo.innerHTML = `Mostrando <b>${Math.min(start + 1, totalRows)}-${Math.min(end, totalRows)}</b> de ${totalRows}`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = end >= totalRows;
+    }
+
+    searchInput.addEventListener('input', () => {
+      currentPage = 1;
+      filterTable();
+      updateTable();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentPage++;
+      updateTable();
+    });
+
+    filterTable();
+    updateTable();
+  });
+
+</script>
+
+{% endblock %}
