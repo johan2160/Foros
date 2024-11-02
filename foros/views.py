@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden
 from functools import wraps
 from datetime import datetime
 from .models import Usuario, Tematica, Foro, Publicacion, Historial, Respuesta, Palabrotas
@@ -43,7 +44,10 @@ def obtener_usuario(request):
 # Views
 @login_required
 def mostrarIndex(request):
-    return render(request, 'index.html', get_session_data(request))
+    publicaciones = Publicacion.objects.all().order_by('-fecha')
+    datos = get_session_data(request)
+    datos['publicaciones'] = publicaciones 
+    return render(request, 'index.html', datos)
 
 def mostrarLogin(request):
     return render(request, 'login.html')
@@ -288,6 +292,13 @@ def mostrarAdministrarTematicas(request):
     return render(request, 'administrar_tematicas.html', datos)
 
 @login_required
+def explorarTematicas(request):
+    tematicas = Tematica.objects.all()
+    datos = {'tematicas': tematicas}
+    datos.update(get_session_data(request))
+    return render(request, 'explorar_tematicas.html', datos)
+
+@login_required
 def mostrarForo(request, foro_id):
     foro = get_object_or_404(Foro, id=foro_id)
     publicaciones = Publicacion.objects.filter(foro=foro)
@@ -396,6 +407,17 @@ def eliminarForo(request, id):
     return redirect('administrar_foros')
 
 @login_required
+def explorarForos(request):
+    tematica_id = request.GET.get('tematica')
+    if tematica_id:
+        foros = Foro.objects.filter(tematica_id=tematica_id)
+    else:
+        foros = Foro.objects.all()
+    datos = {'foros': foros}
+    datos.update(get_session_data(request))
+    return render(request, 'explorar_foros.html', datos)
+
+@login_required
 def mostrarCrearPublicacion(request, foro_id):
     foro = get_object_or_404(Foro, id=foro_id)
     datos = {'foro': foro}
@@ -502,6 +524,65 @@ def formCrearRespuesta(request, foro_id, publicacion_id):
         errores = {'db_error': f'Error al crear la respuesta: {str(e)}'}
         respuestas = Respuesta.objects.filter(publicacion=publicacion).order_by('fecha')
         datos = {'errores': errores, 'foro': foro, 'publicacion': publicacion, 'respuestas': respuestas}
+        datos.update(get_session_data(request))
+        return render(request, 'publicacion.html', datos)
+    
+@login_required
+def mostrarEditarRespuesta(request, foro_id, publicacion_id, respuesta_id):
+    respuesta = get_object_or_404(Respuesta, id=respuesta_id, publicacion_id=publicacion_id)
+    usuario = obtener_usuario(request)
+
+    if usuario.id != respuesta.usuario.id and usuario.tipo_usuario != 'Admin':
+        return HttpResponseForbidden("No tienes permiso para editar esta respuesta.")
+
+    datos = {'respuesta': respuesta, 'foro_id': foro_id, 'publicacion_id': publicacion_id}
+    datos.update(get_session_data(request))
+    return render(request, 'editar_respuesta.html', datos)
+
+@login_required
+def formEditarRespuesta(request, foro_id, publicacion_id, respuesta_id):
+    respuesta = get_object_or_404(Respuesta, id=respuesta_id, publicacion_id=publicacion_id)
+    usuario = obtener_usuario(request)
+
+    if usuario.id != respuesta.usuario.id and usuario.tipo_usuario != 'Admin':
+        return HttpResponseForbidden("No tienes permiso para editar esta respuesta.")
+
+    texto_respuesta = request.POST.get('txtrespuesta')
+
+    if not texto_respuesta.strip():
+        errores = {'texto': 'La respuesta no puede estar vacía.'}
+        datos = {'errores': errores, 'respuesta': respuesta, 'foro_id': foro_id, 'publicacion_id': publicacion_id}
+        datos.update(get_session_data(request))
+        return render(request, 'editar_respuesta.html', datos)
+
+    try:
+        respuesta.texto = texto_respuesta
+        respuesta.save()
+        registrar_historial("Edición de respuesta", usuario.id)
+        return redirect('mostrar_publicacion', foro_id=foro_id, publicacion_id=publicacion_id)
+    except Exception as e:
+        errores = {'db_error': f'Error al editar la respuesta: {str(e)}'}
+        datos = {'errores': errores, 'respuesta': respuesta, 'foro_id': foro_id, 'publicacion_id': publicacion_id}
+        datos.update(get_session_data(request))
+        return render(request, 'editar_respuesta.html', datos)
+
+@login_required
+def eliminarRespuesta(request, foro_id, publicacion_id, respuesta_id):
+    respuesta = get_object_or_404(Respuesta, id=respuesta_id, publicacion_id=publicacion_id)
+    usuario = obtener_usuario(request)
+
+    if usuario.id != respuesta.usuario.id and usuario.tipo_usuario != 'Admin':
+        return HttpResponseForbidden("No tienes permiso para eliminar esta respuesta.")
+
+    try:
+        respuesta.delete()
+        registrar_historial("Eliminación de respuesta", usuario.id)
+        return redirect('mostrar_publicacion', foro_id=foro_id, publicacion_id=publicacion_id)
+    except Exception as e:
+        errores = {'db_error': f'Error al eliminar la respuesta: {str(e)}'}
+        respuestas = Respuesta.objects.filter(publicacion_id=publicacion_id).order_by('fecha')
+        publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+        datos = {'errores': errores, 'foro_id': foro_id, 'publicacion': publicacion, 'respuestas': respuestas}
         datos.update(get_session_data(request))
         return render(request, 'publicacion.html', datos)
 
