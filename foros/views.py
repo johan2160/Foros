@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from functools import wraps
 from datetime import datetime
-from .models import Usuario, Tematica, Foro, Publicacion, Historial, Palabrotas
+from .models import Usuario, Tematica, Foro, Publicacion, Historial, Respuesta, Palabrotas
 
 # Decoradores
 def login_required(view_func):
@@ -460,7 +460,8 @@ def formEditarPublicacion(request, foro_id, publicacion_id):
 def mostrarPublicacion(request, foro_id, publicacion_id):
     foro = get_object_or_404(Foro, id=foro_id)
     publicacion = get_object_or_404(Publicacion, id=publicacion_id)
-    datos = {'foro': foro, 'publicacion': publicacion}
+    respuestas = Respuesta.objects.filter(publicacion=publicacion).order_by('fecha')
+    datos = {'foro': foro, 'publicacion': publicacion, 'respuestas': respuestas}
     datos.update(get_session_data(request))
     return render(request, 'publicacion.html', datos)
 
@@ -478,6 +479,31 @@ def eliminarPublicacion(request, foro_id, publicacion_id):
         datos.update(get_session_data(request))
         return render(request, 'ver_foro.html', datos)
     return redirect('foro', foro_id=foro_id)
+
+@login_required
+def formCrearRespuesta(request, foro_id, publicacion_id):
+    texto_respuesta = request.POST.get('txtrespuesta')
+    usuario = obtener_usuario(request)
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    foro = get_object_or_404(Foro, id=foro_id)
+
+    if not texto_respuesta.strip():
+        errores = {'texto': 'La respuesta no puede estar vacía.'}
+        respuestas = Respuesta.objects.filter(publicacion=publicacion).order_by('fecha')
+        datos = {'errores': errores, 'foro': foro, 'publicacion': publicacion, 'respuestas': respuestas}
+        datos.update(get_session_data(request))
+        return render(request, 'publicacion.html', datos)
+
+    try:
+        Respuesta.objects.create(usuario=usuario, publicacion=publicacion, texto=texto_respuesta)
+        registrar_historial("Creación de respuesta", usuario.id)
+        return redirect('mostrar_publicacion', foro_id=foro.id, publicacion_id=publicacion.id)
+    except Exception as e:
+        errores = {'db_error': f'Error al crear la respuesta: {str(e)}'}
+        respuestas = Respuesta.objects.filter(publicacion=publicacion).order_by('fecha')
+        datos = {'errores': errores, 'foro': foro, 'publicacion': publicacion, 'respuestas': respuestas}
+        datos.update(get_session_data(request))
+        return render(request, 'publicacion.html', datos)
 
 @admin_required
 def mostrarHistorialAcciones(request):
