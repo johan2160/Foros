@@ -45,6 +45,7 @@ ForoVox | Perfil usuario
           <h3 class="text-left font-semibold">Nacionalidad</h3>
           <p clas>{{ usuario.nacionalidad }}</p>
         </div>
+        {% if idUsuario == usuario.id or tipUsuario == 'Admin' %}
         <div class="flex gap-6">
           <a href="{% url 'editar_usuario' usuario.id %}"
             class="flex-1 rounded-md bg-[#1c253b] text-center text-[#fafafa] py-2 transition-colors hover:bg-[#24304C]">Editar
@@ -53,6 +54,7 @@ ForoVox | Perfil usuario
             class="flex-1 rounded-md bg-[#ec2c2c] text-[#fafafa] py-2 transition-colors hover:bg-[#EE4444]">Deshabilitar
             cuenta</button>
         </div>
+        {% endif %}
       </div>
       {% if mensaje_exito %}
 
