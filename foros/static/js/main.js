@@ -11,4 +11,3 @@ window.addEventListener('click', (event) => {
     navigationMenu.classList.add('hidden')
   }
 })
-
