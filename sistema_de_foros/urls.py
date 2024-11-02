@@ -28,6 +28,7 @@ urlpatterns = [
     path('editar_tematica/<int:id>', views.mostrarEditarTematica, name='editar_tematica'),
     path('form_editar_tematica/<int:id>', views.formEditarTematica, name='form_editar_tematica'),
     path('eliminar_tematica/<int:id>', views.eliminarTematica, name='eliminar_tematica'),
+    path('explorar_tematicas/', views.explorarTematicas, name='explorar_tematicas'),
     
     # ---------- Manejo de Foros ----------    
     path('foro/<int:foro_id>', views.mostrarForo, name='foro'),
@@ -37,6 +38,7 @@ urlpatterns = [
     path('form_editar_foro/<int:id>', views.formEditarForo, name='form_editar_foro'),
     path('administrar_foros/', views.mostrarAdministrarForos, name='administrar_foros'),
     path('eliminar_foro/<int:id>', views.eliminarForo, name='eliminar_foro'),
+    path('explorar_foros/', views.explorarForos, name='explorar_foros'),
     
     # ---------- Manejo de Publicaciones ----------    
     path('foro/<int:foro_id>/crear_publicacion', views.mostrarCrearPublicacion, name='crear_publicacion'),
@@ -49,6 +51,9 @@ urlpatterns = [
     
     # ---------- Manejo de Respuestas ----------    
     path('foro/<int:foro_id>/publicacion/<int:publicacion_id>/form_crear_respuesta', views.formCrearRespuesta, name='form_crear_respuesta'),
+    path('foro/<int:foro_id>/publicacion/<int:publicacion_id>/editar_respuesta/<int:respuesta_id>/', views.mostrarEditarRespuesta, name='editar_respuesta'),
+    path('foro/<int:foro_id>/publicacion/<int:publicacion_id>/form_editar_respuesta/<int:respuesta_id>/', views.formEditarRespuesta, name='form_editar_respuesta'),
+    path('foro/<int:foro_id>/publicacion/<int:publicacion_id>/eliminar_respuesta/<int:respuesta_id>/', views.eliminarRespuesta, name='eliminar_respuesta'),
     
     # ---------- Manejo de Historial de Acciones ----------    
     path('historial_acciones/', views.mostrarHistorialAcciones, name='historial_acciones'),
