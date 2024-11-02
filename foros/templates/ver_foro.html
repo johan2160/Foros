@@ -18,27 +18,30 @@ ForoVox | Ver Foro
 {% endif %}
 
 <div class="flex justify-center">
-  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
-    <div class="flex gap-4">
-      {% if foro.imagen %}
-      <img src="{{ foro.imagen.url }}" alt="Imagen del Foro" class="size-11 md:size-14 lg:size-16 rounded-full">
-      {% else %}
-      <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Imagen del foro"
-        class="size-11 md:size-14 lg:size-16 rounded-full">
-      {% endif %}
-
-      <div class="flex flex-col gap-2 max-w-3xl">
+  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem] mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4">
+      <div class="flex justify-center md:justify-start">
+        {% if foro.imagen %}
+          <img src="{{ foro.imagen.url }}" alt="Imagen del Foro" class="w-28 h-28 rounded-full object-cover">
+        {% else %}
+          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Imagen del foro" class="w-28 h-28 rounded-full object-cover">
+        {% endif %}
+      </div>
+      
+      <div class="flex items-center md:items-start flex-col gap-2 max-w-3xl">
         <h1 class="font-bold text-lg">{{ foro.nombre }}</h1>
-        <p class="text-sm">{{ foro.descripcion }}</p>
+        <p class="text-sm text-center md:text-start">{{ foro.descripcion }}</p>
         <div class="flex flex-wrap gap-4 mt-2">
-          <a href="{% url 'crear_publicacion' foro.id %}"
-            class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Crear Publicación
-            <i class="ri-add-line"></i></a>
-          <button
-            class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">Seguir</button>
+          <a href="{% url 'crear_publicacion' foro.id %}" class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">
+            Crear post <i class="ri-add-line"></i>
+          </a>
+          <button class="p-[0.625rem] rounded-lg text-sm bg-[#fafafa] text-[#1c253b] border border-[#1c253b] hover:bg-[#F1F3F8]">
+            Seguir
+          </button>
         </div>
       </div>
     </div>
+    
     {% if publicaciones %}
     <div class="flex flex-col gap-5 mt-8 max-w-3xl w-full">
       {% for publicacion in publicaciones reversed %}
