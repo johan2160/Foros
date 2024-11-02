@@ -46,6 +46,10 @@ urlpatterns = [
     path('foro/<int:foro_id>/publicacion/<int:publicacion_id>', views.mostrarPublicacion, name='mostrar_publicacion'),
     path('foro/<int:foro_id>/eliminar_publicacion/<int:publicacion_id>', views.eliminarPublicacion, name='eliminar_publicacion'),
     
+    
+    # ---------- Manejo de Respuestas ----------    
+    path('foro/<int:foro_id>/publicacion/<int:publicacion_id>/form_crear_respuesta', views.formCrearRespuesta, name='form_crear_respuesta'),
+    
     # ---------- Manejo de Historial de Acciones ----------    
     path('historial_acciones/', views.mostrarHistorialAcciones, name='historial_acciones'),
     
