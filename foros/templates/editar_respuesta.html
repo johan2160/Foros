@@ -1,0 +1,45 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}
+ForoVox | Editar Respuesta
+{% endblock %}
+
+{% block content %}
+
+{% if tipUsuario == "Admin" %}
+  {% include 'components/admin-display.html' %}
+{% else %}
+  {% include 'components/usuario-display.html' %}
+{% endif %}
+
+<div class="flex justify-center">
+  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem]">
+    <h1 class="text-2xl font-bold mb-10 text-start">Editar Respuesta</h1>
+
+    {% if errores %}
+      {% for value in errores.values %}
+        <div x-data="{ show: true }" x-show="show" class="relative mt-4 mb-4 max-w-lg rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <span>{{ value }}</span>
+            </div>
+            <button type="button" @click="show = false" class="text-red-600 hover:text-red-800 focus:outline-none">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'form_editar_respuesta' foro_id publicacion_id respuesta.id %}" method="post" class="flex flex-col gap-4 w-full max-w-lg">
+      {% csrf_token %}
+      <textarea name="txtrespuesta" class="w-full bg-transparent text-left placeholder:text-slate-400 text-slate-700 border border-slate-200 rounded-md px-3 py-2 resize-none h-[8rem]" required>{{ respuesta.texto }}</textarea>
+      <button type="submit" class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Actualizar Respuesta</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
