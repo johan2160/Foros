@@ -1,7 +1,6 @@
 {% extends 'master.html' %}
 {% load static %}
 
-
 {% block title %}
 ForoVox
 {% endblock %}
@@ -9,211 +8,157 @@ ForoVox
 {% block content %}
 
 {% if tipUsuario == "Admin" %}
-
-{% include 'components/admin-display.html' %}
-
+    {% include 'components/admin-display.html' %}
 {% else %}
-
-{% include 'components/usuario-display.html' %}
-
+    {% include 'components/usuario-display.html' %}
 {% endif %}
 
 <div class="flex justify-center">
-  <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[20.813rem]">
-    <h1 class="text-2xl font-bold">Post recientes</h1>
-    <div class="flex flex-col gap-5 mt-8 max-w-3xl">
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">programación</h3>
+    <div class="flex flex-col items-center xl:items-start max-w-7xl w-full px-4 xl:pl-[25rem] mb-6">
+        <h1 class="text-2xl font-bold">Publicaciones recientes</h1>
+        <div class="flex flex-col gap-5 mt-8 max-w-3xl w-full">
+            {% for publicacion in publicaciones %}
+            <div class="flex flex-col gap-3 rounded-lg bg-white border border-slate-200 shadow-md p-4 transition-colors hover:bg-[#F1F3F8] w-full">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <!-- Logo del foro con enlace al foro -->
+                        {% if publicacion.foro.imagen %}
+                            <a href="{% url 'foro' publicacion.foro.id %}">
+                                <img src="{{ publicacion.foro.imagen.url }}" alt="Logo del Foro" class="w-9 h-9 rounded-full object-cover">
+                            </a>
+                        {% else %}
+                            <a href="{% url 'foro' publicacion.foro.id %}">
+                                <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Logo por defecto" class="w-9 h-9 rounded-full object-cover">
+                            </a>
+                        {% endif %}
+                        <!-- Nombre del usuario con enlace a su perfil -->
+                        <a href="{% url 'foro' publicacion.foro.id %}" class="text-sm text-[#2A2A2A] hover:underline">{{ publicacion.foro.nombre }}</a>
+                    </div>
+                    <!-- Mostrar menú solo si el usuario es el autor o es administrador -->
+                    {% if request.session.idUsuario == publicacion.usuario.id or tipUsuario == 'Admin' %}
+                    <div class="relative">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-full text-slate-600 transition-colors hover:bg-slate-200 cursor-pointer hover:text-slate-800"
+                             data-popover-target="postMenu-{{ forloop.counter }}" tabindex="0">
+                            <i class="ri-more-fill text-lg"></i>
+                        </div>
+                        <ul role="menu" data-popover="postMenu-{{ forloop.counter }}" data-popover-placement="bottom"
+                            class="absolute z-10 min-w-[180px] top-full right-0 mt-2 overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg focus:outline-none hidden">
+                            <li role="menuitem"
+                                class="cursor-pointer text-slate-800 flex items-center gap-2 w-full text-sm rounded-md p-3 transition-all hover:bg-slate-100"
+                                onclick="window.location.href='{% url 'mostrar_publicacion' publicacion.foro.id publicacion.id %}'">
+                                <i class="ri-eye-line text-lg"></i>
+                                Ver post
+                            </li>
+                            <li role="menuitem"
+                                class="cursor-pointer text-slate-800 flex items-center gap-2 w-full text-sm rounded-md p-3 transition-all hover:bg-slate-100"
+                                onclick="window.location.href='{% url 'editar_publicacion' publicacion.foro.id publicacion.id %}'">
+                                <i class="ri-edit-line text-lg"></i>
+                                Editar post
+                            </li>
+                            <li role="menuitem"
+                                class="delete-post-btn cursor-pointer text-red-600 flex items-center gap-2 w-full text-sm rounded-md p-3 transition-all hover:bg-red-100"
+                                data-url="{% url 'eliminar_publicacion' publicacion.foro.id publicacion.id %}"
+                                data-titulo="{{ publicacion.titulo }}">
+                                <i class="ri-delete-bin-6-line text-lg"></i>
+                                Eliminar post
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- Enlazar el título de la publicación a la vista de la publicación -->
+                <a href="{% url 'mostrar_publicacion' publicacion.foro.id publicacion.id %}">
+                    <h2 class="font-bold text-lg text-[#1c253b] hover:underline">{{ publicacion.titulo }}</h2>
+                </a>
+                <!-- Contenido de la publicación (truncado) -->
+                <p class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-3">{{ publicacion.texto|truncatewords:30 }}</p>
+                <p class="text-xs text-slate-500 mt-2">{{ publicacion.fecha|date:"d/m/Y H:i" }}</p>
+            </div>
+            {% empty %}
+            <p class="text-gray-500">No hay publicaciones recientes.</p>
+            {% endfor %}
         </div>
-        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
-        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
-          recomiendan aprender
-          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
-          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">matemáticas</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Cómo puedo mejorar en matemáticas? ¡Necesito consejos!</h2>
-        <p class="text-sm">Siempre he tenido dificultades con las matemáticas y quiero mejorar. ¿Qué métodos o recursos
-          me recomiendan para entender mejor los conceptos y practicar? Estoy abierto a sugerencias sobre libros, videos
-          o cualquier técnica que les haya funcionado a ustedes. ¡Gracias por la ayuda!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">videojuegos</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Qué juego me recomiendan para desconectar después de un día largo?</h2>
-        <p class="text-sm">Después de un día largo de trabajo/estudios, me gusta relajarme jugando, pero últimamente no
-          sé qué probar. ¿Algún juego que me recomienden para desconectar y disfrutar sin mucho estrés? Me gustan tanto
-          los juegos relajantes como los de acción ligera. Estoy buscando algo que...</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">empleosadvice</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Consejos para conseguir mi primer trabajo en desarrollo de software?</h2>
-        <p class="text-sm">Estoy en búsqueda de mi primer trabajo en desarrollo de software y no sé muy bien por dónde
-          empezar. ¿Alguien tiene consejos sobre cómo destacar en las entrevistas técnicas, mejorar mi currículum o
-          encontrar oportunidades en empresas de tecnología? He estado aplicando, pero me gustaría saber si hay algo más
-          que pueda hacer para aumentar mis ...</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">programación</h3>
-        </div>
-        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
-        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
-          recomiendan aprender
-          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
-          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">matemáticas</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Cómo puedo mejorar en matemáticas? ¡Necesito consejos!</h2>
-        <p class="text-sm">Siempre he tenido dificultades con las matemáticas y quiero mejorar. ¿Qué métodos o recursos
-          me recomiendan para entender mejor los conceptos y practicar? Estoy abierto a sugerencias sobre libros, videos
-          o cualquier técnica que les haya funcionado a ustedes. ¡Gracias por la ayuda!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">videojuegos</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Qué juego me recomiendan para desconectar después de un día largo?</h2>
-        <p class="text-sm">Después de un día largo de trabajo/estudios, me gusta relajarme jugando, pero últimamente no
-          sé qué probar. ¿Algún juego que me recomienden para desconectar y disfrutar sin mucho estrés? Me gustan tanto
-          los juegos relajantes como los de acción ligera. Estoy buscando algo que...</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">empleosadvice</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Consejos para conseguir mi primer trabajo en desarrollo de software?</h2>
-        <p class="text-sm">Estoy en búsqueda de mi primer trabajo en desarrollo de software y no sé muy bien por dónde
-          empezar. ¿Alguien tiene consejos sobre cómo destacar en las entrevistas técnicas, mejorar mi currículum o
-          encontrar oportunidades en empresas de tecnología? He estado aplicando, pero me gustaría saber si hay algo más
-          que pueda hacer para aumentar mis ...</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">programación</h3>
-        </div>
-        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
-        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
-          recomiendan aprender
-          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
-          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">matemáticas</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Cómo puedo mejorar en matemáticas? ¡Necesito consejos!</h2>
-        <p class="text-sm">Siempre he tenido dificultades con las matemáticas y quiero mejorar. ¿Qué métodos o recursos
-          me recomiendan para entender mejor los conceptos y practicar? Estoy abierto a sugerencias sobre libros, videos
-          o cualquier técnica que les haya funcionado a ustedes. ¡Gracias por la ayuda!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">videojuegos</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Qué juego me recomiendan para desconectar después de un día largo?</h2>
-        <p class="text-sm">Después de un día largo de trabajo/estudios, me gusta relajarme jugando, pero últimamente no
-          sé qué probar. ¿Algún juego que me recomienden para desconectar y disfrutar sin mucho estrés? Me gustan tanto
-          los juegos relajantes como los de acción ligera. Estoy buscando algo que...</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">empleosadvice</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Consejos para conseguir mi primer trabajo en desarrollo de software?</h2>
-        <p class="text-sm">Estoy en búsqueda de mi primer trabajo en desarrollo de software y no sé muy bien por dónde
-          empezar. ¿Alguien tiene consejos sobre cómo destacar en las entrevistas técnicas, mejorar mi currículum o
-          encontrar oportunidades en empresas de tecnología? He estado aplicando, pero me gustaría saber si hay algo más
-          que pueda hacer para aumentar mis ...</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">programación</h3>
-        </div>
-        <h2 class="font-bold text-base">Como empezar en el mundo de la programacion?</h2>
-        <p class="text-sm">Soy nuevo en el mundo de la programación y me siento un poco perdido. ¿Qué lenguajes
-          recomiendan aprender
-          primero? ¿Hay recursos o consejos que puedan compartir para principiantes? Agradecería mucho cualquier
-          orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">matemáticas</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Cómo puedo mejorar en matemáticas? ¡Necesito consejos!</h2>
-        <p class="text-sm">Siempre he tenido dificultades con las matemáticas y quiero mejorar. ¿Qué métodos o recursos
-          me recomiendan para entender mejor los conceptos y practicar? Estoy abierto a sugerencias sobre libros, videos
-          o cualquier técnica que les haya funcionado a ustedes. ¡Gracias por la ayuda!</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">videojuegos</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Qué juego me recomiendan para desconectar después de un día largo?</h2>
-        <p class="text-sm">Después de un día largo de trabajo/estudios, me gusta relajarme jugando, pero últimamente no
-          sé qué probar. ¿Algún juego que me recomienden para desconectar y disfrutar sin mucho estrés? Me gustan tanto
-          los juegos relajantes como los de acción ligera. Estoy buscando algo que...</p>
-      </div>
-      <div class="flex flex-col gap-3 rounded-lg border border-[#D9D9D9] p-2.5 transition-colors hover:bg-[#F1F3F8]">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'imagenes/tabula_rasa.png' %}" alt="Foto de perfil del usuario"
-            class="size-9 rounded-full">
-          <h3 class="text-sm text-[#2A2A2A]">empleosadvice</h3>
-        </div>
-        <h2 class="font-bold text-base">¿Consejos para conseguir mi primer trabajo en desarrollo de software?</h2>
-        <p class="text-sm">Estoy en búsqueda de mi primer trabajo en desarrollo de software y no sé muy bien por dónde
-          empezar. ¿Alguien tiene consejos sobre cómo destacar en las entrevistas técnicas, mejorar mi currículum o
-          encontrar oportunidades en empresas de tecnología? He estado aplicando, pero me gustaría saber si hay algo más
-          que pueda hacer para aumentar mis ...</p>
-      </div>
     </div>
-  </div>
 </div>
+
+<!-- Modal de confirmación para eliminar publicación -->
+<div id="deleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-30">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Eliminar Publicación</h2>
+        <p id="modalMessage" class="text-sm text-gray-600 mb-6">Estás a punto de eliminar esta publicación. Esta acción no se puede deshacer.</p>
+        <div class="flex justify-end space-x-2">
+            <button id="cancelButton"
+                    class="px-4 py-2 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancelar</button>
+            <button id="confirmDeleteButton"
+                    class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
 <script>
-  window.addEventListener('pageshow', function (event) {
-    if (event.persisted) {
-      window.location.reload();
-    }
-  });
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuIcons = document.querySelectorAll('[data-popover-target]');
+
+        menuIcons.forEach((menuIcon) => {
+            const menuId = menuIcon.getAttribute('data-popover-target');
+            const menu = document.querySelector(`[data-popover="${menuId}"]`);
+
+            menuIcon.addEventListener('click', (event) => {
+                event.stopPropagation();
+                menu.classList.toggle('hidden');
+            });
+
+            if (menu) {
+                menu.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                });
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            menuIcons.forEach((menuIcon) => {
+                const menuId = menuIcon.getAttribute('data-popover-target');
+                const menu = document.querySelector(`[data-popover="${menuId}"]`);
+                if (menu && !menu.contains(event.target) && !menuIcon.contains(event.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+        });
+
+        // Código para el modal de eliminación
+        const deleteButtons = document.querySelectorAll('.delete-post-btn');
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelButton = document.getElementById('cancelButton');
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        const modalMessage = document.getElementById('modalMessage');
+        let currentDeleteUrl = '';
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                currentDeleteUrl = button.getAttribute('data-url');
+                const tituloPublicacion = button.getAttribute('data-titulo');
+                modalMessage.textContent = `Estás a punto de eliminar la publicación "${tituloPublicacion}". Esta acción no se puede deshacer.`;
+                deleteModal.classList.remove('hidden');
+            });
+        });
+
+        cancelButton.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+        });
+
+        confirmDeleteButton.addEventListener('click', () => {
+            window.location.href = currentDeleteUrl;
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === deleteModal) {
+                deleteModal.classList.add('hidden');
+            }
+        });
+    });
 </script>
 {% endblock %}
