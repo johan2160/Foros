@@ -75,52 +75,57 @@ ForoVox | Ver Publicación
       </div>
     </div>
 
-    <div class="w-full my-8">
-      <h3 class="text-sm font-semibold text-[#1c253b] px-4 mb-3">Respuestas</h3>
-      <div class="flex flex-col gap-3">
-        <div class="flex flex-col gap-3 rounded-lg hover:bg-slate-100 p-4 transition-colors hover:bg-[#E9EBF1] w-full">
-          <div class="flex items-center gap-2.5">
-            <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
-              class="size-8 rounded-full">
-            <h3 class="text-sm text-[#2A2A2A]">johan800</h3>
+    {% if errores %}
+        {% for value in errores.values %}
+          <div x-data="{ show: true }" x-show="show" class="relative mt-4 mb-4 max-w-lg rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <svg class="h-5 w-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <!-- SVG path -->
+                  <path fill-rule="evenodd" d="M8.257 3.099c.366-.446..."></path>
+                </svg>
+                <span>{{ value }}</span>
+              </div>
+              <button type="button" @click="show = false" class="text-red-600 hover:text-red-800 focus:outline-none">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <!-- SVG path -->
+                  <path d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
           </div>
-          <p class="text-sm text-gray-600">Soy nuevo en el mundo de la programación y me siento un poco perdido.
-            ¿Qué
-            lenguajes recomiendan aprender primero? ¿Hay recursos o consejos que puedan compartir para
-            principiantes?
-            Agradecería mucho cualquier orientación o sugerencia para dar mis primeros pasos. ¡Gracias de antemano!
-          </p>
-          <p class="text-xs text-slate-500">15h atrás</p>
-        </div>
-        <hr class="border-t-2 border-dashed border-slate-300 my-4">
-        <div class="flex flex-col gap-3 rounded-lg hover:bg-slate-100 p-4 transition-colors hover:bg-[#E9EBF1] w-full">
-          <div class="flex items-center gap-2.5">
-            <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
-              class="size-8 rounded-full">
-            <h3 class="text-sm text-[#2A2A2A]">coder123</h3>
-          </div>
-          <p class="text-sm text-gray-600">Te recomendaría empezar con Python, ya que es un lenguaje fácil de
-            aprender y
-            tiene una gran comunidad de apoyo. También hay muchos recursos gratuitos en línea, como videos y
-            tutoriales
-            para principiantes.</p>
-          <p class="text-xs text-slate-500">8h atrás</p>
-        </div>
-        <hr class="border-t-2 border-dashed border-slate-300 my-4">
-        <div class="flex flex-col gap-3 rounded-lg hover:bg-slate-100 p-4 transition-colors hover:bg-[#E9EBF1] w-full">
-          <div class="flex items-center gap-2.5">
-            <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario"
-              class="size-8 rounded-full">
-            <h3 class="text-sm text-[#2A2A2A]">devmaster</h3>
-          </div>
-          <p class="text-sm text-gray-600">Otra buena opción es JavaScript, ya que te permitirá ver resultados
-            rápidamente en la web. Además, puedes explorar HTML y CSS para crear páginas completas. Hay plataformas
-            como
-            freeCodeCamp que son muy útiles para aprender estos lenguajes desde cero.</p>
-          <p class="text-xs text-slate-500">5h atrás</p>
+        {% endfor %}
+      {% endif %}
+
+      <!-- Formulario para escribir una respuesta -->
+      <div class="w-full my-8">
+        <h3 class="text-sm font-semibold text-[#1c253b] mb-3">Escribir una respuesta</h3>
+        <form action="{% url 'form_crear_respuesta' foro.id publicacion.id %}" method="post" class="flex flex-col gap-4">
+          {% csrf_token %}
+          <textarea name="txtrespuesta" placeholder="Escribe tu respuesta aquí..." class="w-full bg-transparent text-left placeholder:text-slate-400 text-slate-700 border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow resize-none h-[8rem]" required></textarea>
+          <button type="submit" class="p-[0.625rem] rounded-lg text-sm bg-[#1c253b] text-[#fafafa] hover:opacity-95">Responder</button>
+        </form>
+      </div>
+
+      <!-- Mostrar respuestas -->
+      <div class="w-full my-8">
+        <h3 class="text-sm font-semibold text-[#1c253b] px-4 mb-3">Respuestas</h3>
+        <div class="flex flex-col gap-3">
+          {% for respuesta in respuestas reversed %}
+            <div class="flex flex-col gap-3 rounded-lg hover:bg-slate-100 p-4 transition-colors w-full">
+              <div class="flex items-center gap-2.5">
+                <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil del usuario" class="size-8 rounded-full">
+                <h3 class="text-sm text-[#2A2A2A]">{{ respuesta.usuario.nombres }}</h3>
+              </div>
+              <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ respuesta.texto }}</p>
+              <p class="text-xs text-slate-500">{{ respuesta.fecha|date:"d-m-Y H:i" }}</p>
+            </div>
+            <hr class="border-t-2 border-dashed border-slate-300 my-4">
+          {% empty %}
+            <p class="text-sm text-gray-600">No hay respuestas aún. ¡Sé el primero en responder!</p>
+          {% endfor %}
         </div>
       </div>
-    </div>
   </div>
 </div>
 {% endif %}
