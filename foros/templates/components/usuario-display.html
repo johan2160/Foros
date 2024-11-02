@@ -20,21 +20,28 @@
     <ul id="navigation-menu"
       class="hidden xl:flex xl:flex-col fixed right-4 top-20 z-50 bg-white text-sm text-[#333333] gap-2 p-4 border-[0.094rem] w-full max-w-72 border-slate-200 shadow-md rounded-lg xl:right-auto xl:left-auto xl:inset-auto">
       {% if idUsuario %}
-      <a href="{% url 'perfil_usuario' idUsuario %}">
-        {% else %}
+        <a href="{% url 'perfil_usuario' idUsuario %}">
+      {% else %}
         <a href="">
-          {% endif %}
-          <li
-            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
-            <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil" class="size-6 rounded-full">
-            Ver Perfil
-          </li>
+      {% endif %}
+        <li
+          class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
+          <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil" class="size-6 rounded-full">
+          Ver Perfil
+        </li>
         </a>
-        <a href="">
+        <a href="{% url 'explorar_foros' %}">
           <li
             class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
             <i class="ri-group-2-line text-2xl"></i>
-            Foros que sigues
+            Foros
+          </li>
+        </a>
+        <a href="{% url 'explorar_tematicas' %}">
+          <li
+            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
+            <i class="ri-layout-masonry-line text-2xl"></i>
+            Temáticas
           </li>
         </a>
         <a href="{% url 'logout' %}">
