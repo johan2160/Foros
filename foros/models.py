@@ -54,6 +54,15 @@ class Publicacion(models.Model):
 
     def __str__(self):
         return f"Publicación de {self.usuario.nombres} en {self.foro.nombre} - {self.titulo}"
+    
+class Respuesta(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
+    texto = models.TextField(max_length=1000)
+    fecha = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Respuesta de {self.usuario.nombres} a {self.publicacion.titulo}"
 
 class Historial(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
