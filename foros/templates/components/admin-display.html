@@ -1,5 +1,5 @@
 {% load static %}
-<header class="fixed z-40 w-full flex justify-center px-4 py-2 bg-[#10182B] text-white">
+<header class="fixed z-40 w-full flex justify-center px-4 py-2 bg-[#10182B] dark:bg-[#2d3748] text-white">
   <div class="relative flex justify-between items-center w-full max-w-7xl">
     <a href="{% url 'index' %}" class="flex items-center gap-2">
       <i class="ri-chat-4-line text-[2rem]"></i>
@@ -7,7 +7,7 @@
         ForoVox</h1>
     </a>
     <div class="flex items-center gap-4">
-      <span>Administrador</span>
+      <span class="dark:text-gray-300">Administrador</span>
       <img src="{% static 'imagenes/default-profile.png' %}" id="profile-image" alt="Foto de perfil"
         class="size-11 rounded-full cursor-pointer xl:cursor-auto">
 
@@ -17,49 +17,49 @@
 <div class="flex justify-center pt-[6.25rem]">
   <aside class="max-w-7xl w-full relative">
     <ul id="navigation-menu"
-      class="hidden xl:flex xl:flex-col fixed right-4 top-20 z-50 bg-white text-sm text-[#333333] gap-2 p-4 border-[0.094rem] w-full max-w-72 border-slate-200 shadow-md rounded-lg xl:right-auto xl:left-auto xl:inset-auto">
+      class="hidden xl:flex xl:flex-col fixed right-4 top-20 z-50 bg-white dark:bg-[#2D3748] text-sm text-[#333333] dark:text-gray-300 gap-2 p-4 border-[0.094rem] border-slate-200 dark:border-slate-700 w-full max-w-72 shadow-md rounded-lg xl:right-auto xl:left-auto xl:inset-auto">
       {% if idUsuario %}
       <a href="{% url 'perfil_usuario' idUsuario %}">
         {% else %}
         <a href="">
           {% endif %}
           <li
-            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
+            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] dark:hover:bg-[#4A5568] transition-colors hover:text-[#000000] dark:hover:text-white cursor-pointer">
             <img src="{% static 'imagenes/default-profile.png' %}" alt="Foto de perfil" class="size-6 rounded-full">
             Ver Perfil
           </li>
         </a>
         <a href="{% url 'administrar_foros' %}">
           <li
-            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
+            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] dark:hover:bg-[#4A5568] transition-colors hover:text-[#000000] dark:hover:text-white cursor-pointer">
             <i class="ri-group-2-line text-2xl"></i>
             Administrar Foros
           </li>
         </a>
         <a href="{% url 'administrar_tematicas' %}">
           <li
-            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
+            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] dark:hover:bg-[#4A5568] transition-colors hover:text-[#000000] dark:hover:text-white cursor-pointer">
             <i class="ri-layout-masonry-line text-2xl"></i>
             Administrar Temáticas
           </li>
         </a>
         <a href="{% url 'gestionar_usuarios' %}">
           <li
-            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
+            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] dark:hover:bg-[#4A5568] transition-colors hover:text-[#000000] dark:hover:text-white cursor-pointer">
             <i class="ri-user-line text-2xl"></i>
             Gestionar Usuarios
           </li>
         </a>
         <a href="{% url 'historial_acciones' %}">
           <li
-            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
+            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] dark:hover:bg-[#4A5568] transition-colors hover:text-[#000000] dark:hover:text-white cursor-pointer">
             <i class="ri-history-line text-2xl"></i>
             Historial de Acciones
           </li>
         </a>
         <a href="{% url 'logout' %}">
           <li
-            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] transition-colors hover:text-[#000000] cursor-pointer">
+            class="flex gap-3 items-center p-1 rounded-md hover:bg-[#F1F3F8] dark:hover:bg-[#4A5568] transition-colors hover:text-[#000000] dark:hover:text-white cursor-pointer">
             <i class="ri-logout-box-r-line text-2xl"></i>
             Cerrar sesión
           </li>
